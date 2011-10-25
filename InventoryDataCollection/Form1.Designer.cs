@@ -75,7 +75,8 @@
             // 
             // listViewInvFile
             // 
-            this.listViewInvFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.listViewInvFile.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.listViewInvFile.AutoArrange = false;
             this.listViewInvFile.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -115,15 +116,18 @@
             // 
             // CPU
             // 
-            this.CPU.Text = "CPU";
+            this.CPU.Text = "CPU (MHz)";
+            this.CPU.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // Memory
             // 
-            this.Memory.Text = "Memory";
+            this.Memory.Text = "Memory(MB)";
+            this.Memory.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // Disk
             // 
-            this.Disk.Text = "Disk";
+            this.Disk.Text = "Disk(MB)";
+            this.Disk.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // OS
             // 

@@ -15,6 +15,7 @@ namespace InventoryDataCollection
             string model = string.Empty;
             string memory = string.Empty;
             string serialnum = string.Empty;
+            StringBuilder sysStr = new StringBuilder();  // builds string that will eventually be written to file. Different than listview because no MB,GB etc
 
             InitializeComponent();
             try
@@ -24,9 +25,10 @@ namespace InventoryDataCollection
                 foreach (ManagementObject queryObj in system)
                 {
                     this.listBoxThisSys.Items.Add("Name = " + queryObj.GetPropertyValue("Name").ToString());
+                    sysStr.Append(queryObj.GetPropertyValue("Name").ToString() + ",");
                     manufacturer = queryObj.GetPropertyValue("Manufacturer").ToString();
                     model = queryObj.GetPropertyValue("Model").ToString();
-                    memory = ((UInt64)queryObj.GetPropertyValue("TotalPhysicalMemory") / 1048576).ToString() + "MB";
+                    memory = ((UInt64)queryObj.GetPropertyValue("TotalPhysicalMemory") / 1048576).ToString();
                 }
                 //Log.WritWTime("done W32 Comp sys");
                 searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT Manufacturer,SerialNumber FROM Win32_BIOS");
@@ -63,16 +65,20 @@ namespace InventoryDataCollection
                         serialnum = queryObj.GetPropertyValue("SerialNumber").ToString();
                 }
                 listBoxThisSys.Items.Add("Manufacturer = " + manufacturer);
+                sysStr.Append(manufacturer + ",");
                 listBoxThisSys.Items.Add("Model = " + model);
+                sysStr.Append(model + ",");
                 listBoxThisSys.Items.Add("Serial Number = " + serialnum);
+                sysStr.Append(serialnum + ",");
                 searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT MaxClockSpeed FROM Win32_Processor");
                 ManagementObjectCollection proc = searcher.Get();
                 foreach (ManagementObject queryObj in proc)
                 {//memory already in place insert before
-                    //Log.WritWTime("clock= " + queryObj.GetPropertyValue("MaxClockSpeed").ToString());
-                    listBoxThisSys.Items.Add("Clock Speed = " + queryObj.GetPropertyValue("MaxClockSpeed").ToString() + "MHz");
+                    listBoxThisSys.Items.Add("Clock Speed = " + queryObj.GetPropertyValue("MaxClockSpeed").ToString() + "Mhz");
+                    sysStr.Append(queryObj.GetPropertyValue("MaxClockSpeed").ToString() + ",");
                 }
-                listBoxThisSys.Items.Add("Memory = " + memory);
+                listBoxThisSys.Items.Add("Memory = " + memory + "MB");
+                sysStr.Append(memory + ",");
                 searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT Size,MediaType FROM Win32_DiskDrive");
                 ManagementObjectCollection disk = searcher.Get();
                 UInt64 diskSize = 0;
@@ -82,7 +88,6 @@ namespace InventoryDataCollection
                     {
                         continue; 
                     }
-                    //Log.WritWTime("Count= " + disk.Count.ToString() + "  Disk= " + queryObj.GetPropertyValue("MediaType").ToString() + queryObj.GetPropertyValue("Size").ToString());
                     if (queryObj.GetPropertyValue("MediaType").ToString().Contains("Fixed"))
                     {
                         diskSize += (UInt64)queryObj.GetPropertyValue("Size");
@@ -90,12 +95,15 @@ namespace InventoryDataCollection
                 }
                 //Log.WritWTime("disk size = " + (diskSize/1073741824).ToString());
                 listBoxThisSys.Items.Add("Disk Size = " + (diskSize / 1073741824).ToString() + "GB");
+                sysStr.Append((diskSize / 1073741824).ToString() + ",");
                 ManagementObjectSearcher searcheros = new ManagementObjectSearcher("root\\CIMV2", "SELECT Caption,Version FROM Win32_OperatingSystem");
                 ManagementObjectCollection os = searcheros.Get();
                 foreach (ManagementObject queryObj in os)
                 {
                     listBoxThisSys.Items.Add("Operating System = " + queryObj.GetPropertyValue("Caption").ToString().Substring(10)); //Eliminiate Microsoft from the OS name
+                    sysStr.Append(queryObj.GetPropertyValue("Caption").ToString().Substring(10)); //Eliminiate Microsoft from the OS name
                     listBoxThisSys.Items.Add("OS Version = " + queryObj.GetPropertyValue("Version").ToString());
+                    sysStr.Append(queryObj.GetPropertyValue("Version").ToString());
                 }
                 //Log.WritWTime("Done wmi queries");
             }
@@ -103,9 +111,7 @@ namespace InventoryDataCollection
             {
                 MessageBox.Show("An Error occurred while querying WMI data: " + e.Message, "Tax-Aide Inventory Data Collection");
             }
-            //Log.WritWTime("ABout to reflect");
             string path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            //Log.WritWTime("Path = " + path);
             StreamWriter file;
             if (!File.Exists(path + "\\TaxAideInvData.txt"))
             {//if file does NOT exist need to write out column headers otherwise just append.
@@ -116,12 +122,6 @@ namespace InventoryDataCollection
                 }
                 file.WriteLine();
                 file.Close();
-            }
-            //Log.WritWTime("File created");
-            StringBuilder sysStr = new StringBuilder();
-            foreach (object line in listBoxThisSys.Items)
-            {// get list box in data items already created above, substring after = sign and dump to csv file
-                sysStr.Append(line.ToString().Substring(line.ToString().IndexOf("=") + 2).Trim() + ",");
             }
             string[] elementsThisSys = sysStr.ToString().Split(new char[] { ',' }, StringSplitOptions.None);
             //Log.WritWTime("New System string created");
@@ -145,7 +145,10 @@ namespace InventoryDataCollection
                     }
                 }
             }
-            //Log.WritWTime("Listview items created");
+            listViewInvFile.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+            listViewInvFile.AutoResizeColumn(4, ColumnHeaderAutoResizeStyle.HeaderSize);
+            listViewInvFile.AutoResizeColumn(5, ColumnHeaderAutoResizeStyle.HeaderSize);
+            listViewInvFile.AutoResizeColumn(6, ColumnHeaderAutoResizeStyle.HeaderSize);
             if (alreadyPresentFlag == 0)
             {
                 ListViewItem item1 = new ListViewItem(elementsThisSys);
@@ -154,7 +157,6 @@ namespace InventoryDataCollection
                 {
                     file.WriteLine(sysStr.ToString());
                 }
-            //Log.WritWTime("File Written");
             }
             else
             {
