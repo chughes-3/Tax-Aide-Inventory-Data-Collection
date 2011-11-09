@@ -42,8 +42,16 @@
             this.Disk = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.OS = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.OSVer = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.partialKey = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label3 = new System.Windows.Forms.Label();
             this.OK = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.entryAssetTag = new System.Windows.Forms.TextBox();
+            this.serialNumHR = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.ATag = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.serNumHum = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
             // label1
@@ -61,16 +69,16 @@
             this.listBoxThisSys.FormattingEnabled = true;
             this.listBoxThisSys.Location = new System.Drawing.Point(16, 35);
             this.listBoxThisSys.Name = "listBoxThisSys";
-            this.listBoxThisSys.Size = new System.Drawing.Size(290, 121);
+            this.listBoxThisSys.Size = new System.Drawing.Size(259, 134);
             this.listBoxThisSys.TabIndex = 1;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(29, 183);
+            this.label2.Location = new System.Drawing.Point(29, 274);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(462, 52);
-            this.label2.TabIndex = 2;
+            this.label2.TabIndex = 0;
             this.label2.Text = resources.GetString("label2.Text");
             // 
             // listViewInvFile
@@ -88,11 +96,14 @@
             this.Memory,
             this.Disk,
             this.OS,
-            this.OSVer});
-            this.listViewInvFile.Location = new System.Drawing.Point(16, 268);
+            this.OSVer,
+            this.partialKey,
+            this.ATag,
+            this.serNumHum});
+            this.listViewInvFile.Location = new System.Drawing.Point(16, 365);
             this.listViewInvFile.Name = "listViewInvFile";
-            this.listViewInvFile.Size = new System.Drawing.Size(619, 250);
-            this.listViewInvFile.TabIndex = 3;
+            this.listViewInvFile.Size = new System.Drawing.Size(642, 234);
+            this.listViewInvFile.TabIndex = 0;
             this.listViewInvFile.UseCompatibleStateImageBehavior = false;
             this.listViewInvFile.View = System.Windows.Forms.View.Details;
             // 
@@ -112,11 +123,11 @@
             // 
             // SerialNum
             // 
-            this.SerialNum.Text = "Serial Number";
+            this.SerialNum.Text = "Serial_Number";
             // 
             // CPU
             // 
-            this.CPU.Text = "CPU (MHz)";
+            this.CPU.Text = "CPU(MHz)";
             this.CPU.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // Memory
@@ -126,7 +137,7 @@
             // 
             // Disk
             // 
-            this.Disk.Text = "Disk(MB)";
+            this.Disk.Text = "Disk(GB)";
             this.Disk.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // OS
@@ -135,15 +146,19 @@
             // 
             // OSVer
             // 
-            this.OSVer.Text = "OS Version";
+            this.OSVer.Text = "OS_Version";
+            // 
+            // partialKey
+            // 
+            this.partialKey.Text = "Partial_Key";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(16, 249);
+            this.label3.Location = new System.Drawing.Point(16, 340);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(575, 13);
-            this.label3.TabIndex = 4;
+            this.label3.TabIndex = 0;
             this.label3.Text = "The current contents of the Inventory Data Text File. This window and the columns" +
                 " below are resizable for better viewing";
             // 
@@ -152,19 +167,80 @@
             this.OK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.OK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.OK.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.OK.Location = new System.Drawing.Point(470, 524);
+            this.OK.Location = new System.Drawing.Point(493, 605);
             this.OK.Name = "OK";
             this.OK.Size = new System.Drawing.Size(75, 38);
-            this.OK.TabIndex = 5;
+            this.OK.TabIndex = 4;
             this.OK.Text = "OK";
             this.OK.UseVisualStyleBackColor = true;
             this.OK.Click += new System.EventHandler(this.OK_Click);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(283, 46);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(380, 104);
+            this.label4.TabIndex = 0;
+            this.label4.Text = resources.GetString("label4.Text");
+            // 
+            // entryAssetTag
+            // 
+            this.entryAssetTag.Location = new System.Drawing.Point(32, 188);
+            this.entryAssetTag.Name = "entryAssetTag";
+            this.entryAssetTag.Size = new System.Drawing.Size(112, 20);
+            this.entryAssetTag.TabIndex = 2;
+            this.entryAssetTag.Text = "Asset Tag";
+            this.entryAssetTag.Enter += new System.EventHandler(this.entryAssetTag_Enter);
+            this.entryAssetTag.Validating += new System.ComponentModel.CancelEventHandler(this.entryAssetTag_Validating);
+            // 
+            // serialNumHR
+            // 
+            this.serialNumHR.Location = new System.Drawing.Point(32, 224);
+            this.serialNumHR.Name = "serialNumHR";
+            this.serialNumHR.Size = new System.Drawing.Size(112, 20);
+            this.serialNumHR.TabIndex = 3;
+            this.serialNumHR.Text = "Serial Number";
+            this.serialNumHR.Enter += new System.EventHandler(this.serialNumHR_Enter);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(165, 186);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(362, 26);
+            this.label5.TabIndex = 0;
+            this.label5.Text = "Please enter the Asset Tag that has previously been used in past inventory \r\ndata" +
+                " spreadsheets to identify this system";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(165, 224);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(380, 26);
+            this.label6.TabIndex = 0;
+            this.label6.Text = "Please enter the Serial Number that has previously been used in past inventory \r\n" +
+                "data spreadsheets to identify the system\r\n";
+            // 
+            // ATag
+            // 
+            this.ATag.Text = "Asset_Tag";
+            // 
+            // serNumHum
+            // 
+            this.serNumHum.Text = "Human_Ser_Num";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(647, 574);
+            this.ClientSize = new System.Drawing.Size(670, 655);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.serialNumHR);
+            this.Controls.Add(this.entryAssetTag);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.OK);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.listViewInvFile);
@@ -181,7 +257,6 @@
         #endregion
 
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ListBox listBoxThisSys;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ListView listViewInvFile;
         private System.Windows.Forms.ColumnHeader Manufacturer;
@@ -195,6 +270,15 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button OK;
         private System.Windows.Forms.ColumnHeader nameComp1;
+        private System.Windows.Forms.Label label4;
+        internal System.Windows.Forms.ListBox listBoxThisSys;
+        private System.Windows.Forms.ColumnHeader partialKey;
+        private System.Windows.Forms.TextBox entryAssetTag;
+        private System.Windows.Forms.TextBox serialNumHR;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.ColumnHeader ATag;
+        private System.Windows.Forms.ColumnHeader serNumHum;
     }
 }
 
