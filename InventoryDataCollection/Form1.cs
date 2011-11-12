@@ -122,10 +122,8 @@ namespace InventoryDataCollection
                     file.Write(entryAssetTag.Text + ",");
                 else
                     file.Write(",");
-                if (serialNumHR.Text != "Serial Number" + ",")
+                if (serialNumHR.Text != "Serial Number")
                     file.WriteLine(serialNumHR.Text);
-                else
-                    file.WriteLine(",");
                 file.Close();
             }
             Environment.Exit(0);
@@ -149,6 +147,23 @@ namespace InventoryDataCollection
             {
                 serialNumHR.Text = "";
             }
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+
+            if (alreadyPresentFlag == 0)
+            {
+                file = new StreamWriter(path + fileName, true);
+                if (entryAssetTag.Text != "Asset Tag")
+                    file.Write(entryAssetTag.Text + ",");
+                else
+                    file.Write(",");
+                if (serialNumHR.Text != "Serial Number")
+                    file.WriteLine(serialNumHR.Text);
+                file.Close();
+            }
+            Environment.Exit(0);
         }
     }
 }

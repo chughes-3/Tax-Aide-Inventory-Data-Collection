@@ -119,9 +119,8 @@
   </resheader>
   <data name="label2.Text" xml:space="preserve">
     <value>The data will be saved in the file TaxAideInvData.csv located in the same folder as this program
-Take this program and the text file and execute the program on each computer. Each computer's
-inventory data in turn will be saved to the text file. The contents of the text file can then be 
-imported into a spreadsheet.</value>
+Take this program and the csv file and execute the program on each computer. Each computer's
+inventory data in turn will be saved to the csv file. This csv file can be opened by a spreadsheet program.</value>
   </data>
   <data name="label4.Text" xml:space="preserve">
     <value>If the Machine Readable Serial number includes any punctuation, please 
@@ -132,5 +131,10 @@ In some cases the Machine Readable Serial Number and Manufacturer
 will be completely different than the human readable versions on the 
 label of the machine. Please just record these different values in future 
 inventory spreadsheets.</value>
+  </data>
+  <data name="label7.Text" xml:space="preserve">
+    <value>The data will be saved in the file TaxAideInvData.csv located in the same folder as this program
+Take this program and the csv file and execute the program on each computer. Each computer's
+inventory data in turn will be saved to the csv file. This csv file can be opened by a spreadsheet program.</value>
   </data>
 </root>
