@@ -30,7 +30,6 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.label1 = new System.Windows.Forms.Label();
-            this.listBoxThisSys = new System.Windows.Forms.ListBox();
             this.label2 = new System.Windows.Forms.Label();
             this.listViewInvFile = new System.Windows.Forms.ListView();
             this.nameComp1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -55,6 +54,7 @@
             this.label7 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
+            this.textBoxThisSys = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // label1
@@ -66,14 +66,6 @@
             this.label1.Size = new System.Drawing.Size(178, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Inventory Data for this System";
-            // 
-            // listBoxThisSys
-            // 
-            this.listBoxThisSys.FormattingEnabled = true;
-            this.listBoxThisSys.Location = new System.Drawing.Point(16, 35);
-            this.listBoxThisSys.Name = "listBoxThisSys";
-            this.listBoxThisSys.Size = new System.Drawing.Size(259, 134);
-            this.listBoxThisSys.TabIndex = 1;
             // 
             // label2
             // 
@@ -269,11 +261,21 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.OK_Click);
             // 
+            // textBoxThisSys
+            // 
+            this.textBoxThisSys.Location = new System.Drawing.Point(19, 30);
+            this.textBoxThisSys.Multiline = true;
+            this.textBoxThisSys.Name = "textBoxThisSys";
+            this.textBoxThisSys.ReadOnly = true;
+            this.textBoxThisSys.Size = new System.Drawing.Size(258, 152);
+            this.textBoxThisSys.TabIndex = 5;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(670, 655);
+            this.Controls.Add(this.textBoxThisSys);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.serialNumHR);
@@ -286,7 +288,6 @@
             this.Controls.Add(this.label7);
             this.Controls.Add(this.listViewInvFile);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.listBoxThisSys);
             this.Controls.Add(this.label1);
             this.Name = "Form1";
             this.Text = "TaxAide Inventory Data Collection";
@@ -313,7 +314,6 @@
         private System.Windows.Forms.Button OK;
         private System.Windows.Forms.ColumnHeader nameComp1;
         private System.Windows.Forms.Label label4;
-        internal System.Windows.Forms.ListBox listBoxThisSys;
         private System.Windows.Forms.ColumnHeader partialKey;
         private System.Windows.Forms.TextBox entryAssetTag;
         private System.Windows.Forms.TextBox serialNumHR;
@@ -324,6 +324,7 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.TextBox textBoxThisSys;
     }
 }
 

@@ -21,32 +21,33 @@ namespace InventoryDataCollection
             Regex regExpCommaFind = new Regex(",");  //To remove commas from strings
             WMI wmi = new WMI();
             wmi.ComputerSystem();
-            listBoxThisSys.Items.Add("Name = " + wmi.sysWmi["name"]); //starts build string for file output and adds line to listbox
+            textBoxThisSys.AppendText("Name = " + wmi.sysWmi["name"] + "\r\n"); //starts build string for file output and adds line to listbox
             sysStr.Append(wmi.sysWmi["name"] + ",");
             //Log.WritWTime("done W32 Comp sys");
             wmi.BiosMotherBoard();  //builds manufacturer serial number fields Adds the lines to listbox in method
-            listBoxThisSys.Items.Add("Manufacturer = " + wmi.sysWmi["manufacturer"]);
+            textBoxThisSys.AppendText("Manufacturer = " + wmi.sysWmi["manufacturer"] + "\r\n");
             sysStr.Append(wmi.sysWmi["manufacturer"] + ",");
-            listBoxThisSys.Items.Add("Model = " + wmi.sysWmi["model"]);
+            textBoxThisSys.Lines[1] = "tae";
+            textBoxThisSys.AppendText("Model = " + wmi.sysWmi["model"] + "\r\n");
             sysStr.Append(wmi.sysWmi["model"] + ",");
-            listBoxThisSys.Items.Add("Serial Number = " + wmi.sysWmi["serialnum"]);
+            textBoxThisSys.AppendText("Serial Number = " + wmi.sysWmi["serialnum"] + "\r\n");
             sysStr.Append(wmi.sysWmi["serialnum"] + ",");
             wmi.Proc();
-            listBoxThisSys.Items.Add("Clock Speed = " + wmi.sysWmi["clockSpeed"] + "Mhz");  //memory originally obtained in computer system
+            textBoxThisSys.AppendText("Clock Speed = " + wmi.sysWmi["clockSpeed"] + "Mhz" + "\r\n");  //memory originally obtained in computer system
             sysStr.Append(wmi.sysWmi["clockSpeed"] + ",");
-            listBoxThisSys.Items.Add("Memory = " + wmi.sysWmi["memory"] + "MB");
+            textBoxThisSys.AppendText("Memory = " + wmi.sysWmi["memory"] + "MB" + "\r\n");
             sysStr.Append(wmi.sysWmi["memory"] + ",");
             wmi.DiskDrive();
-            listBoxThisSys.Items.Add("Disk Size = " + wmi.sysWmi["diskSize"] + "GB");
+            textBoxThisSys.AppendText("Disk Size = " + wmi.sysWmi["diskSize"] + "GB" + "\r\n");
             sysStr.Append(wmi.sysWmi["diskSize"] + ",");
             wmi.OS();  // writes OS version text and numeric to listbox and string for file
-            listBoxThisSys.Items.Add("Operating System = " + wmi.sysWmi["OScaption"]);
+            textBoxThisSys.AppendText("Operating System = " + wmi.sysWmi["OScaption"] + "\r\n");
             sysStr.Append(wmi.sysWmi["OScaption"] + ",");
-            listBoxThisSys.Items.Add("OS Version = " + wmi.sysWmi["OSversion"]);
+            textBoxThisSys.AppendText("OS Version = " + wmi.sysWmi["OSversion"] + "\r\n");
             sysStr.Append(wmi.sysWmi["OSversion"] + ",");
-            wmi.SysLicService();
-            listBoxThisSys.Items.Add("Partial Product Key = " + wmi.sysWmi["partialKey"]);
-            sysStr.Append(wmi.sysWmi["partialKey"] + ",");
+            wmi.SysLicServicePartialKey();
+            textBoxThisSys.AppendText("Partial Product Key = " + wmi.sysWmi["partialKey"]);
+            sysStr.Append(wmi.sysWmi["partialKey"] + "," + "\r\n");
             //Log.WritWTime("Done wmi queries");
             path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             if (!File.Exists(path + fileName))
@@ -82,14 +83,12 @@ namespace InventoryDataCollection
                     }
                 }
             }
+file = new StreamWriter(path + fileName, true);
             if (alreadyPresentFlag == 0)
             {
+                file.Write(sysStr.ToString().Substring(0, sysStr.ToString().Length - 2));  // do not write line allow for asset tag etc
                 ListViewItem item1 = new ListViewItem(elementsThisSys);
                 listViewInvFile.Items.Add(item1);
-                using (file = new StreamWriter(path + fileName, true))
-                {
-                    file.Write(sysStr.ToString());  // do not write line allow for asset tag etc
-                }
                 listViewInvFile.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
                 listViewInvFile.AutoResizeColumn(4, ColumnHeaderAutoResizeStyle.HeaderSize);
                 listViewInvFile.AutoResizeColumn(5, ColumnHeaderAutoResizeStyle.HeaderSize);
@@ -117,7 +116,6 @@ namespace InventoryDataCollection
         {
             if (alreadyPresentFlag == 0)
             {
-                file = new StreamWriter(path + fileName, true);
                 if (entryAssetTag.Text != "Asset Tag")
                     file.Write(entryAssetTag.Text + ",");
                 else
@@ -154,7 +152,6 @@ namespace InventoryDataCollection
 
             if (alreadyPresentFlag == 0)
             {
-                file = new StreamWriter(path + fileName, true);
                 if (entryAssetTag.Text != "Asset Tag")
                     file.Write(entryAssetTag.Text + ",");
                 else
