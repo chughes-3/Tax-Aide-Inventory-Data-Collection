@@ -125,6 +125,8 @@ file = new StreamWriter(path + fileName, true);
                     file.Write(",");
                 if (serialNumHR.Text != "Serial Number")
                     file.WriteLine(serialNumHR.Text);
+                else
+                    file.WriteLine("");
                 file.Close();
             }
             Environment.Exit(0);
@@ -161,6 +163,8 @@ file = new StreamWriter(path + fileName, true);
                     file.Write(",");
                 if (serialNumHR.Text != "Serial Number")
                     file.WriteLine(serialNumHR.Text);
+                else
+                    file.WriteLine("");
                 file.Close();
             }
             Environment.Exit(0);
