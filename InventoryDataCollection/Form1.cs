@@ -46,8 +46,11 @@ namespace InventoryDataCollection
             textBoxThisSys.AppendText("OS Version = " + wmi.sysWmi["OSversion"] + "\r\n");
             sysStr.Append(wmi.sysWmi["OSversion"] + ",");
             wmi.SysLicServicePartialKey();
-            textBoxThisSys.AppendText("Partial Product Key = " + wmi.sysWmi["partialKey"]);
-            sysStr.Append(wmi.sysWmi["partialKey"] + "," + "\r\n");
+            textBoxThisSys.AppendText("Partial Product Key = " + wmi.sysWmi["partialKey"] + "\r\n");
+            sysStr.Append(wmi.sysWmi["partialKey"] + ",");
+            wmi.GetProductKey();
+            textBoxThisSys.AppendText("Full Key = " + wmi.sysWmi["ProductKey"]);
+            sysStr.Append(wmi.sysWmi["ProductKey"] + ",");
             //Log.WritWTime("Done wmi queries");
             path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             if (!File.Exists(path + fileName))
@@ -86,7 +89,7 @@ namespace InventoryDataCollection
 file = new StreamWriter(path + fileName, true);
             if (alreadyPresentFlag == 0)
             {
-                file.Write(sysStr.ToString().Substring(0, sysStr.ToString().Length - 2));  // do not write line allow for asset tag etc
+                file.Write(sysStr.ToString().Substring(0, sysStr.ToString().Length));  // do not write line allow for asset tag etc
                 ListViewItem item1 = new ListViewItem(elementsThisSys);
                 listViewInvFile.Items.Add(item1);
                 listViewInvFile.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);

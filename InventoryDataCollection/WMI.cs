@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Management;
+using System.Collections;
+using Microsoft.Win32;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Diagnostics;
@@ -242,6 +244,48 @@ namespace InventoryDataCollection
             //at this point assume we have memory and disl size then
             sysWmi["serialnum"] = diskSize.ToString() + ":" + memory.ToString();
             return;
+        }
+        internal void GetProductKey()
+        {
+            RegistryKey registry = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", false);
+            byte[] digitalProductId = registry.GetValue("DigitalProductId") as byte[];
+            sysWmi["ProductKey"] = DecodeProductKey(digitalProductId);
+            
+        }
+        private string DecodeProductKey(byte[] digitalProductId)
+        {
+            const int keyStartIndex = 52;// Offset of first byte of encoded product key in 'DigitalProductIdxxx" REG_BINARY value. Offset = 34H.
+            const int keyEndIndex = keyStartIndex + 15;// Offset of last byte of encoded product key in 'DigitalProductIdxxx" REG_BINARY value. Offset = 43H.
+            // Possible alpha-numeric characters in product key.
+            char[] digits = new char[] { 'B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'M', 'P', 'Q', 'R', 'T', 'V', 'W', 'X', 'Y', '2', '3', '4', '6', '7', '8', '9', };
+
+            const int decodeLength = 29;  // Length of decoded product key
+            const int decodeStringLength = 15;  // Length of decoded product key in byte-form.  Each byte represents 2 chars.
+            char[] decodedChars = new char[decodeLength];  // Array of containing the decoded product key.
+            ArrayList hexPid = new ArrayList();  // Extract byte 52 to 67 inclusive.
+            for (int i = keyStartIndex; i <= keyEndIndex; i++)
+            {
+                hexPid.Add(digitalProductId[i]);
+            }
+            for (int i = decodeLength - 1; i >= 0; i--)
+            {
+                if ((i + 1) % 6 == 0)  // Every sixth char is a separator.
+                {
+                    decodedChars[i] = '-';
+                }
+                else
+                {
+                    int digitMapIndex = 0;  // Do the actual decoding.
+                    for (int j = decodeStringLength - 1; j >= 0; j--)
+                    {
+                        int byteValue = (digitMapIndex << 8) | (byte)hexPid[j];
+                        hexPid[j] = (byte)(byteValue / 24);
+                        digitMapIndex = byteValue % 24;
+                        decodedChars[i] = digits[digitMapIndex];
+                    }
+                }
+            }
+            return new string(decodedChars);
         }
     }
 }

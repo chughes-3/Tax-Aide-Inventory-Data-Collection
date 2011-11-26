@@ -55,6 +55,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.textBoxThisSys = new System.Windows.Forms.TextBox();
+            this.ProdKey = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
             // label1
@@ -93,6 +94,7 @@
             this.OS,
             this.OSVer,
             this.partialKey,
+            this.ProdKey,
             this.ATag,
             this.serNumHum});
             this.listViewInvFile.Location = new System.Drawing.Point(16, 365);
@@ -270,6 +272,10 @@
             this.textBoxThisSys.Size = new System.Drawing.Size(258, 152);
             this.textBoxThisSys.TabIndex = 5;
             // 
+            // ProdKey
+            // 
+            this.ProdKey.Text = "Product_Key";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -325,6 +331,7 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.TextBox textBoxThisSys;
+        private System.Windows.Forms.ColumnHeader ProdKey;
     }
 }
 
