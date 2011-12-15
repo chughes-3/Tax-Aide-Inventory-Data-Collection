@@ -4,7 +4,7 @@ using System.IO;
 
 namespace InventoryDataCollection
 {
-    static class Program
+    static class Start
     {
         /// <summary>
         /// The main entry point for the application.

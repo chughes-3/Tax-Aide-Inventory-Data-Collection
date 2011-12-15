@@ -72,7 +72,10 @@ namespace InventoryDataCollection
                                 sysWmi["model"] = "Motherboard";
                             }
                             sysWmi["manufacturer"] = item.GetPropertyValue("Manufacturer").ToString().Trim();
-                            sysWmi["serialnum"] = item.GetPropertyValue("SerialNumber").ToString().Trim();
+                            if (item.GetPropertyValue("SerialNumber") != null)
+                            {
+                                sysWmi["serialnum"] = item.GetPropertyValue("SerialNumber").ToString().Trim();
+                            }
                         }
                     }
                     else
@@ -86,10 +89,38 @@ namespace InventoryDataCollection
                 {
                     VBoxSerial();   // setup serial number for virtual box
                 }
+                if (sysWmi["serialnum"] == string.Empty)    //will get here for 6310 with intel wireless
+                {//use mac address since nothing else available
+                    Net();  //get Mac Address
+                    sysWmi["serialnum"] = sysWmi["MACAddress"];
+                }
             }
             catch (ManagementException e)
             {
                 MessageBox.Show("An Error occurred while querying Baseboard or BIOS WMI data: " + e.Message, "Tax-Aide Inventory Data Collection");
+                Environment.Exit(0);
+            }
+        }
+        internal void Net()
+        {
+            try
+            {
+                searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT MACAddress FROM Win32_NetworkAdapter");
+                ManagementObjectCollection net = searcher.Get();
+                foreach (ManagementObject queryObj in net)
+                {//memory already in place insert before
+                    if (queryObj.GetPropertyValue("MACAddress") != null)
+                    {
+                        sysWmi["MACAddress"] = queryObj.GetPropertyValue("MACAddress").ToString();
+                        //Log.WritWTime("MacAddress =" + sysWmi["MACAddress"]);
+                        return; //Only get first real mac address skip the rest
+                    }
+                }
+
+            }
+            catch (ManagementException e)
+            {
+                MessageBox.Show("An Error occurred while querying Net WMI data: " + e.Message, "Tax-Aide Inventory Data Collection");
                 Environment.Exit(0);
             }
         }
