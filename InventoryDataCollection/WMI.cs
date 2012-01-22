@@ -242,7 +242,7 @@ namespace InventoryDataCollection
                 {
                     System.Threading.Thread.Sleep(500);
                 }
-                return 1;
+                return proc.ExitCode;
             }
             else
                 return 0;
@@ -258,7 +258,7 @@ namespace InventoryDataCollection
                 System.Threading.Thread.Sleep(500);
             }
         }
-        internal void LicInstall(string productKey)
+        internal int LicInstall(string productKey)
         {
             Process proc = new Process();
             proc.StartInfo.FileName = Environment.SystemDirectory.Substring(0, 2) + "\\SyncCommands\\slmgrmine.vbs";
@@ -268,6 +268,7 @@ namespace InventoryDataCollection
             {
                 System.Threading.Thread.Sleep(500);
             }
+            return proc.ExitCode;
         }
         void VBoxSerial()
         {
