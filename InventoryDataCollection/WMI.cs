@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Management;
+using System.Collections;
+using Microsoft.Win32;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Diagnostics;
@@ -10,12 +11,16 @@ namespace InventoryDataCollection
 {
     class WMI
     {
-        internal Dictionary<string, string> sysWmi = new Dictionary<string, string>();
-
+        SystemData sysData;
         UInt64 diskSize = 0;    // needed here for VB serial number calc
         UInt64 memory = 0;
+        string macAddress;
         Regex regExpCommaFind = new Regex(",");  //To remove commas from strings
         ManagementObjectSearcher searcher;
+        public WMI(SystemData thisSys)
+        {
+            sysData = thisSys;
+        }
         internal void ComputerSystem()
         {
             try
@@ -25,13 +30,13 @@ namespace InventoryDataCollection
                 foreach (ManagementObject queryObj in system)
                 {
                     string name = regExpCommaFind.Replace(queryObj.GetPropertyValue("Name").ToString(), "");
-                    sysWmi.Add("name", name.Trim());
+                    sysData.compName = name.Trim();
                     string mfr = regExpCommaFind.Replace(queryObj.GetPropertyValue("Manufacturer").ToString(), "");
-                    sysWmi.Add("manufacturer", mfr.Trim());
+                    sysData.compManufacturer = mfr.Trim();
                     string model = regExpCommaFind.Replace(queryObj.GetPropertyValue("Model").ToString(), "");
-                    sysWmi.Add("model", model.Trim());
+                    sysData.compModel = model.Trim();
                     memory = (UInt64)queryObj.GetPropertyValue("TotalPhysicalMemory");
-                    sysWmi.Add("memory", (memory / 1048576).ToString());
+                    sysData.compMemory = (memory / 1048576).ToString();
                 }
             }
             catch (ManagementException e)
@@ -50,49 +55,45 @@ namespace InventoryDataCollection
                 //Log.WritWTime("bios info = " + bios.Count.ToString());
                 foreach (ManagementObject queryObj in bios)
                 {
-                    if (queryObj.GetPropertyValue("SerialNumber") == null)
-                    {
-                        sysWmi.Add("serialnum", string.Empty);
-                    }
-                    else
-                        sysWmi.Add("serialnum", queryObj.GetPropertyValue("SerialNumber").ToString().Trim());
+                    if (queryObj.GetPropertyValue("SerialNumber") != null)
+                        sysData.compSerialNum = queryObj.GetPropertyValue("SerialNumber").ToString().Trim();
                     Regex alpha = new Regex(@"^[A-Za-z\s]+$");
-                    if (alpha.IsMatch(sysWmi["serialnum"]))
+                    if (alpha.IsMatch(sysData.compSerialNum))
                     {// IS alphabetic or space therefore presumed not to be real serial number
-                        sysWmi["serialnum"] = string.Empty;
+                        sysData.compSerialNum = string.Empty;
                     }
-                    if (sysWmi["serialnum"] == string.Empty)
+                    if (sysData.compSerialNum == string.Empty)
                     {
                         ManagementObjectSearcher searcherbb = new ManagementObjectSearcher("root\\CIMV2", "SELECT Manufacturer,SerialNumber FROM Win32_Baseboard");
                         ManagementObjectCollection baseboard = searcherbb.Get();
                         foreach (ManagementObject item in baseboard)
                         {
-                            if (alpha.IsMatch(sysWmi["model"]))
+                            if (alpha.IsMatch(sysData.compModel))
                             {//If we have a non useful serial we test the model to make sure that is useful
-                                sysWmi["model"] = "Motherboard";
+                                sysData.compModel = "Motherboard";
                             }
-                            sysWmi["manufacturer"] = item.GetPropertyValue("Manufacturer").ToString().Trim();
+                            sysData.compManufacturer = item.GetPropertyValue("Manufacturer").ToString().Trim();
                             if (item.GetPropertyValue("SerialNumber") != null)
                             {
-                                sysWmi["serialnum"] = item.GetPropertyValue("SerialNumber").ToString().Trim();
+                                sysData.compSerialNum = item.GetPropertyValue("SerialNumber").ToString().Trim();
                             }
                         }
                     }
                     else
-                        sysWmi["serialnum"] = queryObj.GetPropertyValue("SerialNumber").ToString().Trim();
+                        sysData.compSerialNum = queryObj.GetPropertyValue("SerialNumber").ToString().Trim();
                 }
-                sysWmi["manufacturer"] = regExpCommaFind.Replace(sysWmi["manufacturer"], "").Trim();    // remove commas
-                sysWmi["model"] = regExpCommaFind.Replace(sysWmi["model"], "").Trim();
-                sysWmi["serialnum"] = regExpCommaFind.Replace(sysWmi["serialnum"], "").Trim();
+                sysData.compManufacturer = regExpCommaFind.Replace(sysData.compManufacturer, "").Trim();    // remove commas
+                sysData.compModel = regExpCommaFind.Replace(sysData.compModel, "").Trim();
+                sysData.compSerialNum = regExpCommaFind.Replace(sysData.compSerialNum, "").Trim();
 
-                if (sysWmi["manufacturer"] == "innotek GmbH" && (sysWmi["serialnum"] == "0" || sysWmi["serialnum"] == "")) //We have aVirtual Box systemtrue)
+                if (sysData.compManufacturer == "innotek GmbH" && (sysData.compSerialNum == "0" || sysData.compSerialNum == "")) //We have aVirtual Box systemtrue)
                 {
                     VBoxSerial();   // setup serial number for virtual box
                 }
-                if (sysWmi["serialnum"] == string.Empty)    //will get here for 6310 with intel wireless
+                if (sysData.compSerialNum == string.Empty)    //will get here for 6310 with intel wireless
                 {//use mac address since nothing else available
                     Net();  //get Mac Address
-                    sysWmi["serialnum"] = sysWmi["MACAddress"];
+                    sysData.compSerialNum = macAddress;
                 }
             }
             catch (ManagementException e)
@@ -111,7 +112,7 @@ namespace InventoryDataCollection
                 {//memory already in place insert before
                     if (queryObj.GetPropertyValue("MACAddress") != null)
                     {
-                        sysWmi["MACAddress"] = queryObj.GetPropertyValue("MACAddress").ToString();
+                        macAddress = queryObj.GetPropertyValue("MACAddress").ToString();
                         //Log.WritWTime("MacAddress =" + sysWmi["MACAddress"]);
                         return; //Only get first real mac address skip the rest
                     }
@@ -132,7 +133,7 @@ namespace InventoryDataCollection
                 ManagementObjectCollection proc = searcher.Get();
                 foreach (ManagementObject queryObj in proc)
                 {//memory already in place insert before
-                    sysWmi["clockSpeed"] = regExpCommaFind.Replace(queryObj.GetPropertyValue("MaxClockSpeed").ToString(), "");
+                    sysData.compClockSpeed = regExpCommaFind.Replace(queryObj.GetPropertyValue("MaxClockSpeed").ToString(), "");
                 }
 
             }
@@ -160,7 +161,7 @@ namespace InventoryDataCollection
                     }
                 }
                 //Log.WritWTime("disk size = " + (diskSize/1073741824).ToString());
-                sysWmi["diskSize"] = (diskSize / 1073741824).ToString();
+                sysData.compDiskSize = (diskSize / 1073741824).ToString();
 
             }
             catch (ManagementException e)
@@ -177,10 +178,19 @@ namespace InventoryDataCollection
                 ManagementObjectCollection os = searcheros.Get();
                 foreach (ManagementObject queryObj in os)
                 {
-                    sysWmi["OScaption"] = queryObj.GetPropertyValue("Caption").ToString().Substring(10); //Eliminiate Microsoft from the OS name
-                    sysWmi["OSversion"] = queryObj.GetPropertyValue("Version").ToString();
+                    sysData.osCaption = queryObj.GetPropertyValue("Caption").ToString().Substring(10); //Eliminiate Microsoft from the OS name
+                    sysData.osVersion = queryObj.GetPropertyValue("Version").ToString();
                 }
+                if (Environment.OSVersion.Version.Major > 5)
+                {
 
+                    searcheros = new ManagementObjectSearcher("root\\CIMV2", "SELECT OSArchitecture FROM Win32_OperatingSystem");
+                    os = searcheros.Get();
+                    foreach (ManagementObject queryObj in os)
+                    {
+                        sysData.osWidth = queryObj.GetPropertyValue("OSArchitecture").ToString();
+                    }
+                }
             }
             catch (ManagementException e)
             {
@@ -188,28 +198,21 @@ namespace InventoryDataCollection
                 Environment.Exit(0);
             }
         }
-        internal void SysLicServicePartialKey()
+        internal void PartialKey()
         {
-            if (sysWmi["OScaption"] != "Windows 7 Professional ")
-            {
-                sysWmi["partialKey"] = "";
+            if (Environment.OSVersion.Version.Major < 6)
                 return;
-            }
             try
             {
                 searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT PartialProductKey FROM SoftwareLicensingProduct");
                 ManagementObjectCollection keys = searcher.Get();
                 foreach (ManagementObject queryObj in keys)
                 {
-                    sysWmi["partialKey"] = (string)queryObj.GetPropertyValue("PartialProductKey");
-                    if (sysWmi["partialKey"] != null)
+                    if (queryObj.GetPropertyValue("PartialProductKey") != null)
                     {
+                        sysData.osPartialKey = (string)queryObj.GetPropertyValue("PartialProductKey");
                         break;
                     }
-                }
-                if (sysWmi["partialKey"] == null)
-                {
-                    sysWmi["partialKey"] = "";
                 }
             }
             catch (ManagementException e)
@@ -240,7 +243,7 @@ namespace InventoryDataCollection
                 {
                     System.Threading.Thread.Sleep(500);
                 }
-                return 1;
+                return proc.ExitCode;
             }
             else
                 return 0;
@@ -256,7 +259,7 @@ namespace InventoryDataCollection
                 System.Threading.Thread.Sleep(500);
             }
         }
-        internal void LicInstall(string productKey)
+        internal int LicInstall(string productKey)
         {
             Process proc = new Process();
             proc.StartInfo.FileName = Environment.SystemDirectory.Substring(0, 2) + "\\SyncCommands\\slmgrmine.vbs";
@@ -266,13 +269,65 @@ namespace InventoryDataCollection
             {
                 System.Threading.Thread.Sleep(500);
             }
+            return proc.ExitCode;
         }
         void VBoxSerial()
         {
             DiskDrive();
             //at this point assume we have memory and disl size then
-            sysWmi["serialnum"] = diskSize.ToString() + ":" + memory.ToString();
+            sysData.compSerialNum = diskSize.ToString() + ":" + memory.ToString();
             return;
+        }
+        internal void GetProductKey()
+        {
+            RegistryKey registry = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", false);
+            byte[] digitalProductId = registry.GetValue("DigitalProductId") as byte[];
+            sysData.osProductKey = DecodeProductKey(digitalProductId);
+            if (Environment.OSVersion.Version.Major < 6)
+                return;
+            byte[] digitalProductId4 = registry.GetValue("DigitalProductId4") as byte[];
+            sysData.osKeyType = GetString(digitalProductId4, 0x03F8);
+        }
+        private string DecodeProductKey(byte[] digitalProductId)
+        {
+            const int keyStartIndex = 52;// Offset of first byte of encoded product key in 'DigitalProductIdxxx" REG_BINARY value. Offset = 34H.
+            const int keyEndIndex = keyStartIndex + 15;// Offset of last byte of encoded product key in 'DigitalProductIdxxx" REG_BINARY value. Offset = 43H.
+            // Possible alpha-numeric characters in product key.
+            char[] digits = new char[] { 'B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'M', 'P', 'Q', 'R', 'T', 'V', 'W', 'X', 'Y', '2', '3', '4', '6', '7', '8', '9', };
+
+            const int decodeLength = 29;  // Length of decoded product key
+            const int decodeStringLength = 15;  // Length of decoded product key in byte-form.  Each byte represents 2 chars.
+            char[] decodedChars = new char[decodeLength];  // Array of containing the decoded product key.
+            ArrayList hexPid = new ArrayList();  // Extract byte 52 to 67 inclusive.
+            for (int i = keyStartIndex; i <= keyEndIndex; i++)
+            {
+                hexPid.Add(digitalProductId[i]);
+            }
+            for (int i = decodeLength - 1; i >= 0; i--)
+            {
+                if ((i + 1) % 6 == 0)  // Every sixth char is a separator.
+                {
+                    decodedChars[i] = '-';
+                }
+                else
+                {
+                    int digitMapIndex = 0;  // Do the actual decoding.
+                    for (int j = decodeStringLength - 1; j >= 0; j--)
+                    {
+                        int byteValue = (digitMapIndex << 8) | (byte)hexPid[j];
+                        hexPid[j] = (byte)(byteValue / 24);
+                        digitMapIndex = byteValue % 24;
+                        decodedChars[i] = digits[digitMapIndex];
+                    }
+                }
+            }
+            return new string(decodedChars);
+        }
+        string GetString(byte[] bytes, int index)
+        {
+            int n = index;
+            while (!(bytes[n] == 0 && bytes[n + 1] == 0)) n++;
+            return Encoding.ASCII.GetString(bytes, index, n - index).Replace("\0", "");
         }
     }
 }

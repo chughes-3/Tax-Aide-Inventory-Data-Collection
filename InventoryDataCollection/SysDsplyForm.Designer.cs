@@ -1,6 +1,6 @@
 ﻿namespace InventoryDataCollection
 {
-    partial class Form1
+    partial class SysDsplyForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,22 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SysDsplyForm));
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.listViewInvFile = new System.Windows.Forms.ListView();
-            this.nameComp1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.Manufacturer = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.Model = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.SerialNum = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.CPU = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.Memory = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.Disk = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.OS = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.OSVer = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.partialKey = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.ATag = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.serNumHum = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label3 = new System.Windows.Forms.Label();
             this.OK = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
@@ -52,7 +40,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.buttonOK = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.textBoxThisSys = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
@@ -82,88 +70,26 @@
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.listViewInvFile.AutoArrange = false;
-            this.listViewInvFile.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.nameComp1,
-            this.Manufacturer,
-            this.Model,
-            this.SerialNum,
-            this.CPU,
-            this.Memory,
-            this.Disk,
-            this.OS,
-            this.OSVer,
-            this.partialKey,
-            this.ATag,
-            this.serNumHum});
+            this.listViewInvFile.FullRowSelect = true;
             this.listViewInvFile.Location = new System.Drawing.Point(16, 365);
+            this.listViewInvFile.MultiSelect = false;
             this.listViewInvFile.Name = "listViewInvFile";
             this.listViewInvFile.Size = new System.Drawing.Size(642, 234);
             this.listViewInvFile.TabIndex = 0;
             this.listViewInvFile.UseCompatibleStateImageBehavior = false;
             this.listViewInvFile.View = System.Windows.Forms.View.Details;
-            // 
-            // nameComp1
-            // 
-            this.nameComp1.Text = "Name";
-            this.nameComp1.Width = 120;
-            // 
-            // Manufacturer
-            // 
-            this.Manufacturer.Text = "Manufacturer";
-            this.Manufacturer.Width = 74;
-            // 
-            // Model
-            // 
-            this.Model.Text = "Model";
-            // 
-            // SerialNum
-            // 
-            this.SerialNum.Text = "Serial_Number";
-            // 
-            // CPU
-            // 
-            this.CPU.Text = "CPU(MHz)";
-            this.CPU.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // Memory
-            // 
-            this.Memory.Text = "Memory(MB)";
-            this.Memory.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // Disk
-            // 
-            this.Disk.Text = "Disk(GB)";
-            this.Disk.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // OS
-            // 
-            this.OS.Text = "OS";
-            // 
-            // OSVer
-            // 
-            this.OSVer.Text = "OS_Version";
-            // 
-            // partialKey
-            // 
-            this.partialKey.Text = "Partial_Key";
-            // 
-            // ATag
-            // 
-            this.ATag.Text = "Asset_Tag";
-            // 
-            // serNumHum
-            // 
-            this.serNumHum.Text = "Human_Ser_Num";
+            this.listViewInvFile.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewInvFile_ColumnClick);
+            this.listViewInvFile.ItemActivate += new System.EventHandler(this.listViewInvFile_ItemActivate);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(16, 340);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(575, 13);
+            this.label3.Size = new System.Drawing.Size(551, 13);
             this.label3.TabIndex = 0;
-            this.label3.Text = "The current contents of the Inventory Data Text File. This window and the columns" +
-                " below are resizable for better viewing";
+            this.label3.Text = "The current contents of the Inventory Data File. This window and the columns belo" +
+                "w are resizable for better viewing";
             // 
             // OK
             // 
@@ -195,7 +121,7 @@
             this.entryAssetTag.TabIndex = 2;
             this.entryAssetTag.Text = "Asset Tag";
             this.entryAssetTag.Enter += new System.EventHandler(this.entryAssetTag_Enter);
-            this.entryAssetTag.Validating += new System.ComponentModel.CancelEventHandler(this.entryAssetTag_Validating);
+            this.entryAssetTag.Leave += new System.EventHandler(this.entryAssetTag_Leave);
             // 
             // serialNumHR
             // 
@@ -205,6 +131,7 @@
             this.serialNumHR.TabIndex = 3;
             this.serialNumHR.Text = "Serial Number";
             this.serialNumHR.Enter += new System.EventHandler(this.serialNumHR_Enter);
+            this.serialNumHR.Leave += new System.EventHandler(this.serialNumHR_Leave);
             // 
             // label5
             // 
@@ -231,22 +158,22 @@
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(29, 274);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(501, 39);
+            this.label7.Size = new System.Drawing.Size(509, 39);
             this.label7.TabIndex = 0;
             this.label7.Text = resources.GetString("label7.Text");
             // 
-            // button1
+            // buttonOK
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(493, 605);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 38);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "OK";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.OK_Click);
+            this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.buttonOK.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonOK.Location = new System.Drawing.Point(493, 605);
+            this.buttonOK.Name = "buttonOK";
+            this.buttonOK.Size = new System.Drawing.Size(75, 38);
+            this.buttonOK.TabIndex = 4;
+            this.buttonOK.Text = "OK";
+            this.buttonOK.UseVisualStyleBackColor = true;
+            this.buttonOK.Click += new System.EventHandler(this.OK_Click);
             // 
             // button2
             // 
@@ -270,8 +197,9 @@
             this.textBoxThisSys.Size = new System.Drawing.Size(258, 152);
             this.textBoxThisSys.TabIndex = 5;
             // 
-            // Form1
+            // SysDsplyForm
             // 
+            this.AcceptButton = this.buttonOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(670, 655);
@@ -282,14 +210,15 @@
             this.Controls.Add(this.entryAssetTag);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.buttonOK);
             this.Controls.Add(this.OK);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.listViewInvFile);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Name = "Form1";
+            this.Name = "SysDsplyForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "TaxAide Inventory Data Collection";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.ResumeLayout(false);
@@ -302,27 +231,15 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ListView listViewInvFile;
-        private System.Windows.Forms.ColumnHeader Manufacturer;
-        private System.Windows.Forms.ColumnHeader Model;
-        private System.Windows.Forms.ColumnHeader SerialNum;
-        private System.Windows.Forms.ColumnHeader CPU;
-        private System.Windows.Forms.ColumnHeader Memory;
-        private System.Windows.Forms.ColumnHeader Disk;
-        private System.Windows.Forms.ColumnHeader OS;
-        private System.Windows.Forms.ColumnHeader OSVer;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button OK;
-        private System.Windows.Forms.ColumnHeader nameComp1;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ColumnHeader partialKey;
         private System.Windows.Forms.TextBox entryAssetTag;
         private System.Windows.Forms.TextBox serialNumHR;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.ColumnHeader ATag;
-        private System.Windows.Forms.ColumnHeader serNumHum;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonOK;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.TextBox textBoxThisSys;
     }
