@@ -12,11 +12,11 @@ namespace InventoryDataCollection
         SystemData thisSystemData = new SystemData();  //Will do all wmi stuff and load dictionary;
         SystemsDataMultiple allSystemsData = new SystemsDataMultiple();  //will load all data from file if it exists;
         private int sortColumn = -1;    //used by sorting routine to record last column clicked
-        ListViewItem lvItemThisSys;
+        internal int lvItemIndexThisSys;
         public SysDsplyForm()
         {
             InitializeComponent();
-            textBoxThisSys.AppendText("Name = " + thisSystemData.compName + "\r\n"); 
+            textBoxThisSys.AppendText("Name = " + thisSystemData.compName + "\r\n");
             //Log.WritWTime("done W32 Comp sys");
             textBoxThisSys.AppendText("Manufacturer = " + thisSystemData.compManufacturer + "\r\n");
             textBoxThisSys.Lines[1] = "tae";
@@ -37,6 +37,8 @@ namespace InventoryDataCollection
             int row = 1;
             foreach (SystemData item in allSystemsData)
             {//Special enumerator to get just systemdata out of dictionary
+                ListViewItem lvItemNew;
+                bool thisSystemFlag = false;
                 string[] lvSubItems = new string[listViewInvFile.Columns.Count];
                 foreach (ColumnHeader col in listViewInvFile.Columns)
                 {
@@ -50,10 +52,31 @@ namespace InventoryDataCollection
                         System.Reflection.PropertyInfo prop = item.GetType().GetProperty(col.Name.ToString());
                         lvSubItems[col.Index] = (string)prop.GetValue(item, null);
                     }
-
+                    if (col.Name == "compSerialNum" && lvSubItems[col.Index] == thisSystemData.compSerialNum)
+                    {
+                        lvItemIndexThisSys = row - 2;
+                        thisSystemFlag = true;
+                    }
                 }
-                lvItemThisSys = new ListViewItem(lvSubItems);
-                listViewInvFile.Items.Add(lvItemThisSys);
+                lvItemNew = new ListViewItem(lvSubItems);
+                if (thisSystemFlag == true)
+                    lvItemNew.Name = "ThisSys";
+                listViewInvFile.Items.Add(lvItemNew);
+                //Move this system to top of the list
+                if (lvItemIndexThisSys != 0)
+                {
+                    ListView.ListViewItemCollection rows = listViewInvFile.Items;
+                    ListViewItem lvItem = rows[lvItemIndexThisSys];
+                    rows.RemoveAt(lvItemIndexThisSys);
+                    rows.Insert(0, lvItem);
+                    //update row numbers
+                    for (int i = 0; i <= listViewInvFile.Items.Count - 1; i++)
+                    {
+                        ListViewItem.ListViewSubItemCollection det = listViewInvFile.Items[i].SubItems;
+                        det[0].Text = (i + 1).ToString();
+                    }
+                    lvItemIndexThisSys = 0;
+                }
             }
             listViewInvFile.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
             foreach (ColumnHeader col in listViewInvFile.Columns)
@@ -65,9 +88,9 @@ namespace InventoryDataCollection
             }
             int colIndex = listViewInvFile.Columns.IndexOfKey("compClockSpeed");
             listViewInvFile.AutoResizeColumn(colIndex, ColumnHeaderAutoResizeStyle.HeaderSize);
-            colIndex = listViewInvFile.Columns.IndexOfKey("compMemory"); 
+            colIndex = listViewInvFile.Columns.IndexOfKey("compMemory");
             listViewInvFile.AutoResizeColumn(colIndex, ColumnHeaderAutoResizeStyle.HeaderSize);
-            colIndex = listViewInvFile.Columns.IndexOfKey("compDiskSize"); 
+            colIndex = listViewInvFile.Columns.IndexOfKey("compDiskSize");
             listViewInvFile.AutoResizeColumn(colIndex, ColumnHeaderAutoResizeStyle.HeaderSize);
             listViewInvFile.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.HeaderSize);     //sets row column up
         }
@@ -101,13 +124,18 @@ namespace InventoryDataCollection
         }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            //in case OK typed after asset tag entry need to make sure it is updated
+            if (entryAssetTag.Text != "Asset Tag" && thisSystemData.compAssetTag != entryAssetTag.Text)
+                thisSystemData.compAssetTag = entryAssetTag.Text;
+            if (serialNumHR.Text != "Serial Number" && thisSystemData.compSerialNumHR != serialNumHR.Text)
+                thisSystemData.compSerialNumHR = serialNumHR.Text;
             XmlTextWriter wxml = new XmlTextWriter(SystemsDataMultiple.path + SystemsDataMultiple.fileName, null);
             wxml.Formatting = Formatting.Indented;
             wxml.WriteStartDocument(true);
             wxml.WriteComment("IDC XML Version 2012.01");
             wxml.WriteStartElement("Systems");
             ListView.ListViewItemCollection rows = listViewInvFile.Items;
-            int serialNumIndex = listViewInvFile.Columns.IndexOfKey("compSerialNum") ;   
+            int serialNumIndex = listViewInvFile.Columns.IndexOfKey("compSerialNum");
             for (int i = 0; i < listViewInvFile.Items.Count; i++)
             {
                 string serial = rows[i].SubItems[serialNumIndex].Text;
@@ -137,9 +165,8 @@ namespace InventoryDataCollection
         {
             thisSystemData.compAssetTag = entryAssetTag.Text;
             ListView.ListViewItemCollection rows = listViewInvFile.Items;
-            int compAssetIndex = listViewInvFile.Columns.IndexOfKey("compAssetTag") ;
-            int itemThisSys = listViewInvFile.Items.IndexOf(lvItemThisSys);
-            rows[itemThisSys].SubItems[compAssetIndex].Text = entryAssetTag.Text;
+            int compAssetIndex = listViewInvFile.Columns.IndexOfKey("compAssetTag");
+            rows[lvItemIndexThisSys].SubItems[compAssetIndex].Text = entryAssetTag.Text;
         }
 
         private void serialNumHR_Enter(object sender, EventArgs e)
@@ -154,9 +181,8 @@ namespace InventoryDataCollection
         {
             thisSystemData.compSerialNumHR = serialNumHR.Text;
             ListView.ListViewItemCollection rows = listViewInvFile.Items;
-            int compSerialHRIndex = listViewInvFile.Columns.IndexOfKey("compSerialNumHR") ;
-            int itemThisSys = listViewInvFile.Items.IndexOf(lvItemThisSys);
-            rows[itemThisSys].SubItems[compSerialHRIndex].Text = serialNumHR.Text;
+            int compSerialHRIndex = listViewInvFile.Columns.IndexOfKey("compSerialNumHR");
+            rows[lvItemIndexThisSys].SubItems[compSerialHRIndex].Text = serialNumHR.Text;
         }
 
         private void listViewInvFile_ColumnClick(object sender, ColumnClickEventArgs e)
@@ -186,9 +212,10 @@ namespace InventoryDataCollection
             for (int i = 0; i <= listViewInvFile.Items.Count - 1; i++)
             {
                 ListViewItem.ListViewSubItemCollection det = listViewInvFile.Items[i].SubItems;
-                det[0].Text = (i+1).ToString();
+                det[0].Text = (i + 1).ToString();
             }
-
+            //update this system index
+            lvItemIndexThisSys = listViewInvFile.Items.IndexOfKey("ThisSys");
         }
         class ListViewItemComparer : IComparer
         {
@@ -218,8 +245,10 @@ namespace InventoryDataCollection
 
         private void listViewInvFile_ItemActivate(object sender, EventArgs e)
         {
-            ItemActions rowAction = new ItemActions(ref listViewInvFile,listViewInvFile.SelectedIndices[0], ref allSystemsData);
+            ItemActions rowAction = new ItemActions(ref listViewInvFile, listViewInvFile.SelectedIndices[0], ref allSystemsData);
             rowAction.ShowDialog();
+            lvItemIndexThisSys = listViewInvFile.Items.IndexOfKey("ThisSys");
         }
+
     }
 }

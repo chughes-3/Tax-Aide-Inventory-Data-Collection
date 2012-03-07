@@ -30,7 +30,7 @@ namespace InventoryDataCollection
             labelInitialStatement.Text += (item + 1).ToString();    //ROW is always item+1
             //next get assettag and serial index, then get data and load this form with that data
             int serialNumIndex = listViewInvFile.Columns.IndexOfKey("compSerialNum");  //index of the serial number column 
-            serialNoMR = rows[item].SubItems[serialNumIndex].Text;   //gets teh MR serial number from listview row
+            serialNoMR = rows[item].SubItems[serialNumIndex].Text;   //gets the MR serial number from listview row
             assetTagIndex = listViewInvFile.Columns.IndexOfKey("compAssetTag");
             serialNumHRIndex = listViewInvFile.Columns.IndexOfKey("compSerialNumHR");
             textboxAssetTag.Text = rows[item].SubItems[assetTagIndex].Text;
@@ -67,14 +67,32 @@ namespace InventoryDataCollection
             textBoxBeforeRow.Text = "";
         }
 
+        private void textboxAssetTag_Leave(object sender, EventArgs e)
+        {
+            if (textboxAssetTag.Text != assetTag && textboxAssetTag.Text.Trim() != string.Empty)
+            {
+            rows[item].SubItems[assetTagIndex].Text = textboxAssetTag.Text;
+            allSystemsData.SystemChangeAssetorSerial(serialNoMR, textboxAssetTag.Text, "");
+            }
+        }
+
+        private void textBoxSerialNo_Leave(object sender, EventArgs e)
+        {
+            if (textBoxSerialNo.Text != serialNoHR && textBoxSerialNo.Text.Trim() != string.Empty)
+            {
+            rows[item].SubItems[serialNumHRIndex].Text = textBoxSerialNo.Text;
+            allSystemsData.SystemChangeAssetorSerial(serialNoMR, "", textBoxSerialNo.Text);
+            }
+        }
+
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            if (textBoxSerialNo.Text != serialNoHR)
+            if (textBoxSerialNo.Text != serialNoHR && textBoxSerialNo.Text.Trim() != string.Empty)
             {// we have a changed serial number HR
             rows[item].SubItems[serialNumHRIndex].Text = textBoxSerialNo.Text;
             allSystemsData.SystemChangeAssetorSerial(serialNoMR, "", textBoxSerialNo.Text);
             }
-            if (textboxAssetTag.Text != assetTag)
+            if (textboxAssetTag.Text != assetTag && textboxAssetTag.Text.Trim() != string.Empty)
             {//We have a changed asset tag
             rows[item].SubItems[assetTagIndex].Text = textboxAssetTag.Text;
             allSystemsData.SystemChangeAssetorSerial(serialNoMR, textboxAssetTag.Text, "");
@@ -96,7 +114,6 @@ namespace InventoryDataCollection
 
         private void MoveRow(int newRow)
         {
-
             listViewInvFile.Sorting = SortOrder.None;
             ListViewItem lvItem = rows[item];
             if (newRow < 0)

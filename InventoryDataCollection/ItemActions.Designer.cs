@@ -78,6 +78,7 @@
             this.textboxAssetTag.Size = new System.Drawing.Size(100, 20);
             this.textboxAssetTag.TabIndex = 6;
             this.textboxAssetTag.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.textboxAssetTag.Leave += new System.EventHandler(this.textboxAssetTag_Leave);
             // 
             // labelAssetTag
             // 
@@ -95,6 +96,7 @@
             this.textBoxSerialNo.Size = new System.Drawing.Size(100, 20);
             this.textBoxSerialNo.TabIndex = 7;
             this.textBoxSerialNo.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.textBoxSerialNo.Leave += new System.EventHandler(this.textBoxSerialNo_Leave);
             // 
             // labelSerialNo
             // 

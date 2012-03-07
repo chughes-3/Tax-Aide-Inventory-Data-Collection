@@ -119,7 +119,7 @@ namespace InventoryDataCollection
     {
 
 
-        #region Class Constant definitions
+        #region Class Constant definitions ie some, but not all of the inventory spreadsheet column headings
         const string assetTag = "Asset_Tag";
         const string clockSpeed = "Processor_Speed";
         const string memory = "Memory";
@@ -137,10 +137,10 @@ namespace InventoryDataCollection
         const string productKey = "OS_Product_Key";
         #endregion
 
+#region System Data Ordered Dictionary definition, this sets data field order in XML file.Named Const fields used elsewhere in program
         OrderedDictionary sysData = new OrderedDictionary()
             {//Setup dictionary entries and therfore order of inventory data fields in XML file, named fields used in program. Non named are ther to fill out spreadsheet
 
-#region Dictionary Field definitions
 		        {"State", ""},
                 {assetTag , String.Empty},
                 {"Category", String.Empty},
