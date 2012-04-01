@@ -57,11 +57,12 @@ namespace InventoryDataCollection
             }
             syssDataMultiple.Add(sysData.compSerialNum, sysData);
         }
-        public void SystemChangeAssetorSerial(string serialNum, string AssetTNew, string SerialNoHRNew)
+        public void SystemChangeAsset(string serialNum, string AssetTNew)
         {
-            if (AssetTNew != string.Empty)
                 syssDataMultiple[serialNum].compAssetTag = AssetTNew;
-            if (SerialNoHRNew != string.Empty)
+        }
+        public void SystemChangeSerial(string serialNum, string SerialNoHRNew)
+        {
                 syssDataMultiple[serialNum].compSerialNumHR = SerialNoHRNew;
         }
         public XElement SystemXElement(string serialNum)

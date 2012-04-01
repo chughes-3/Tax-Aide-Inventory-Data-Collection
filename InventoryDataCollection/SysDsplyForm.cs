@@ -163,10 +163,10 @@ namespace InventoryDataCollection
 
         private void entryAssetTag_Leave(object sender, EventArgs e)
         {
-            thisSystemData.compAssetTag = entryAssetTag.Text;
+            thisSystemData.compAssetTag = entryAssetTag.Text.Trim();
             ListView.ListViewItemCollection rows = listViewInvFile.Items;
             int compAssetIndex = listViewInvFile.Columns.IndexOfKey("compAssetTag");
-            rows[lvItemIndexThisSys].SubItems[compAssetIndex].Text = entryAssetTag.Text;
+            rows[lvItemIndexThisSys].SubItems[compAssetIndex].Text = entryAssetTag.Text.Trim();
         }
 
         private void serialNumHR_Enter(object sender, EventArgs e)
@@ -179,10 +179,10 @@ namespace InventoryDataCollection
 
         private void serialNumHR_Leave(object sender, EventArgs e)
         {
-            thisSystemData.compSerialNumHR = serialNumHR.Text;
+            thisSystemData.compSerialNumHR = serialNumHR.Text.Trim();
             ListView.ListViewItemCollection rows = listViewInvFile.Items;
             int compSerialHRIndex = listViewInvFile.Columns.IndexOfKey("compSerialNumHR");
-            rows[lvItemIndexThisSys].SubItems[compSerialHRIndex].Text = serialNumHR.Text;
+            rows[lvItemIndexThisSys].SubItems[compSerialHRIndex].Text = serialNumHR.Text.Trim();
         }
 
         private void listViewInvFile_ColumnClick(object sender, ColumnClickEventArgs e)

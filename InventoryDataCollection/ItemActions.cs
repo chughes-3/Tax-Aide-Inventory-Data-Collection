@@ -33,8 +33,10 @@ namespace InventoryDataCollection
             serialNoMR = rows[item].SubItems[serialNumIndex].Text;   //gets the MR serial number from listview row
             assetTagIndex = listViewInvFile.Columns.IndexOfKey("compAssetTag");
             serialNumHRIndex = listViewInvFile.Columns.IndexOfKey("compSerialNumHR");
-            textboxAssetTag.Text = rows[item].SubItems[assetTagIndex].Text;
-            textBoxSerialNo.Text = rows[item].SubItems[serialNumHRIndex].Text;
+            if (rows[item].SubItems[assetTagIndex].Text != string.Empty)
+                textboxAssetTag.Text = rows[item].SubItems[assetTagIndex].Text;
+            if (rows[item].SubItems[serialNumHRIndex].Text != string.Empty)
+                textBoxSerialNo.Text = rows[item].SubItems[serialNumHRIndex].Text;
             assetTag = textboxAssetTag.Text;
             serialNoHR = textBoxSerialNo.Text;
         }
@@ -67,36 +69,38 @@ namespace InventoryDataCollection
             textBoxBeforeRow.Text = "";
         }
 
+        private void textboxAssetTag_Enter(object sender, EventArgs e)
+        {
+            if (textboxAssetTag.Text == "Asset Tag")
+                textboxAssetTag.Text = "";
+        }
+
         private void textboxAssetTag_Leave(object sender, EventArgs e)
         {
-            if (textboxAssetTag.Text != assetTag && textboxAssetTag.Text.Trim() != string.Empty)
+            if (textboxAssetTag.Text != "Asset Tag" && textboxAssetTag.Text.Trim() != assetTag)
             {
-            rows[item].SubItems[assetTagIndex].Text = textboxAssetTag.Text;
-            allSystemsData.SystemChangeAssetorSerial(serialNoMR, textboxAssetTag.Text, "");
+                rows[item].SubItems[assetTagIndex].Text = textboxAssetTag.Text.Trim();
+                allSystemsData.SystemChangeAsset(serialNoMR, textboxAssetTag.Text.Trim());
             }
+        }
+
+        private void textBoxSerialNo_Enter(object sender, EventArgs e)
+        {
+            if (textBoxSerialNo.Text == "Serial Number")
+                textBoxSerialNo.Text = "";
         }
 
         private void textBoxSerialNo_Leave(object sender, EventArgs e)
         {
-            if (textBoxSerialNo.Text != serialNoHR && textBoxSerialNo.Text.Trim() != string.Empty)
+            if (textBoxSerialNo.Text != "Serial Number" && textBoxSerialNo.Text.Trim() != serialNoHR)
             {
-            rows[item].SubItems[serialNumHRIndex].Text = textBoxSerialNo.Text;
-            allSystemsData.SystemChangeAssetorSerial(serialNoMR, "", textBoxSerialNo.Text);
+                rows[item].SubItems[serialNumHRIndex].Text = textBoxSerialNo.Text.Trim();
+                allSystemsData.SystemChangeSerial(serialNoMR,textBoxSerialNo.Text.Trim());
             }
         }
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            if (textBoxSerialNo.Text != serialNoHR && textBoxSerialNo.Text.Trim() != string.Empty)
-            {// we have a changed serial number HR
-            rows[item].SubItems[serialNumHRIndex].Text = textBoxSerialNo.Text;
-            allSystemsData.SystemChangeAssetorSerial(serialNoMR, "", textBoxSerialNo.Text);
-            }
-            if (textboxAssetTag.Text != assetTag && textboxAssetTag.Text.Trim() != string.Empty)
-            {//We have a changed asset tag
-            rows[item].SubItems[assetTagIndex].Text = textboxAssetTag.Text;
-            allSystemsData.SystemChangeAssetorSerial(serialNoMR, textboxAssetTag.Text, "");
-            }
             int newRow;
             if (textBoxBeforeRow.Text != "")
             {
@@ -161,5 +165,7 @@ namespace InventoryDataCollection
             }
 
         }
+
+
     }
 }
