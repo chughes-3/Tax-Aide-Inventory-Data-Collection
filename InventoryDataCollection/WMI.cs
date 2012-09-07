@@ -90,15 +90,50 @@ namespace InventoryDataCollection
                 {
                     VBoxSerial();   // setup serial number for virtual box
                 }
-                if (sysData.compSerialNum == string.Empty)    //will get here for 6310 with intel wireless
+                if (sysData.compSerialNum == string.Empty || sysData.compSerialNum == "ÿÿÿÿÿ")    //will get here for 6310 with intel wireless, or optiflex ydiaeresis
                 {//use mac address since nothing else available
-                    Net();  //get Mac Address
+                    NetSerial();  //get Mac Address for wired LAN adapter - harder than it looks!!! - found out the hard way!!
                     sysData.compSerialNum = macAddress;
                 }
             }
             catch (ManagementException e)
             {
                 MessageBox.Show("An Error occurred while querying Baseboard or BIOS WMI data: " + e.Message, "Tax-Aide Inventory Data Collection");
+                Environment.Exit(0);
+            }
+        }
+        internal void NetSerial()
+        {
+            try
+            {
+                searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT Name,Manufacturer,PNPDeviceID,MACAddress FROM Win32_NetworkAdapter");
+                ManagementObjectCollection net = searcher.Get();
+                foreach (ManagementObject queryObj in net)
+                {
+                    if (queryObj.GetPropertyValue("MACAddress") == null)
+                        continue;
+                    if (queryObj.GetPropertyValue("Manufacturer") == null)
+                        continue;
+                    else
+                    {
+                        if (queryObj.GetPropertyValue("Manufacturer").ToString().ToLower() == "microsoft")
+                            continue;
+                    }
+                    string name = queryObj.GetPropertyValue("Name").ToString();
+                    name = name.ToLower();
+                    if (name.Contains("bluetooth") || name.Contains("wireless") || name.Contains("wifi") || name.Contains("mobile") || name.Contains("wlan") || name.Contains("802.11"))
+                        continue;
+                    if (queryObj.GetPropertyValue("PNPDeviceID").ToString().Contains("ROOT"))
+                        continue;
+                    macAddress = queryObj.GetPropertyValue("MACAddress").ToString();
+                    return;
+                }
+                MessageBox.Show("An Error occurred while analyzing Mac Address WMI data", "Tax-Aide Inventory Data Collection");
+                Environment.Exit(0);
+            }
+            catch (ManagementException e)
+            {
+                MessageBox.Show("An Error occurred while querying Net Adapter Info WMI data: " + e.Message, "Tax-Aide Inventory Data Collection");
                 Environment.Exit(0);
             }
         }
