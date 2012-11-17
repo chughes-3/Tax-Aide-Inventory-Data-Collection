@@ -20,10 +20,10 @@ namespace InventoryDataCollection
         [STAThread]
         static void Main()
         {
-            DateTime endDemo = new DateTime(2012, 11, 30);
+            DateTime endDemo = new DateTime(2013, 1, 31);
             if (endDemo < DateTime.Now)
             {
-                MessageBox.Show("This program is intended for use in the 2012 Tax-Aide Inventory reporting activity.\r\nIt is expected that a new program version will be created for 2013.\r\nTherefore this version stopped working in Nov 2012.\r\n\r\nQuestions? Please contact your TCS or TaxAideTech","AARP Foundation Tax-Aide");
+                MessageBox.Show("This program is a draft version intended for use before the 2013 Tax-Aide Inventory reporting activity.\r\nIt is likely that a new program version will be created for the 2013 Inventory Reporting.\r\nTherefore this version stopped working in Feb 2013.\r\n\r\nQuestions? Please contact your TCS or TaxAideTech","AARP Foundation Tax-Aide");
                 Environment.Exit(0);
             }
             //Log debugLog = new Log(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\TAInvLog.log");

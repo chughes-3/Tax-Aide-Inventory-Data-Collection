@@ -6,6 +6,7 @@ using Microsoft.Win32;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Linq;
 
 namespace InventoryDataCollection
 {
@@ -92,7 +93,6 @@ namespace InventoryDataCollection
                 }
                 if (sysData.compSerialNum == string.Empty || sysData.compSerialNum == "ÿÿÿÿÿ")    //will get here for 6310 with intel wireless, or optiflex ydiaeresis
                 {//use mac address since nothing else available
-                    NetSerial();  //get Mac Address for wired LAN adapter - harder than it looks!!! - found out the hard way!!
                     sysData.compSerialNum = macAddress;
                 }
             }
@@ -106,8 +106,29 @@ namespace InventoryDataCollection
         {
             try
             {
-                searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT Name,Manufacturer,PNPDeviceID,MACAddress FROM Win32_NetworkAdapter");
+                searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT Name,NetConnectionID,Manufacturer,PNPDeviceID,MACAddress FROM Win32_NetworkAdapter");
                 ManagementObjectCollection net = searcher.Get();
+                string netCompStr = "xxx";  //to ensure no matchif not assigned
+                var count = net.Cast<ManagementObject>().Where(s => s.GetPropertyValue("NetConnectionID") != null).Count(c => String.Compare((string)c.GetPropertyValue("NetConnectionID"), 0, "Local Area Connection", 0, 20) == 0);   //prior to Windows 8
+                if (count > 0)
+                    netCompStr = net.Cast<ManagementObject>().Where(s => s.GetPropertyValue("NetConnectionID") != null).Where(c => String.Compare((string)c.GetPropertyValue("NetConnectionID"), 0, "Local Area Connection", 0, 20) == 0).Min(s => (string)s.GetPropertyValue("NetConnectionID"));    //should result in lowest numbered local area connection
+                else if (count == 0)
+                {
+                    var cnt = net.Cast<ManagementObject>().Where(s => s.GetPropertyValue("NetConnectionID") != null).Count(c => String.Compare((string)c.GetPropertyValue("NetConnectionID"), 0, "Ethernet", 0, 8) == 0);    //Windows 8
+                    if (cnt > 0)
+                        netCompStr = net.Cast<ManagementObject>().Where(s => s.GetPropertyValue("NetConnectionID") != null).Where(c => String.Compare((string)c.GetPropertyValue("NetConnectionID"), 0, "Ethernet", 0, 8) == 0).Min(s => (string)s.GetPropertyValue("NetConnectionID"));    //should result in lowest numbered local area connection
+                    //may need a wireless here in future for tablets
+                }
+                foreach (ManagementObject queryObj in net)
+                {
+                    if ((string)queryObj.GetPropertyValue("NetConnectionID") == netCompStr)
+                    {
+                        sysData.compLAC_Name = (string)queryObj.GetPropertyValue("Name");
+                        sysData.compLAC_Mac = (string)queryObj.GetPropertyValue("MACAddress");
+                        break;
+                    }
+                    
+                }
                 foreach (ManagementObject queryObj in net)
                 {
                     if (queryObj.GetPropertyValue("MACAddress") == null)
@@ -128,35 +149,12 @@ namespace InventoryDataCollection
                     macAddress = queryObj.GetPropertyValue("MACAddress").ToString();
                     return;
                 }
-                MessageBox.Show("An Error occurred while analyzing Mac Address WMI data", "Tax-Aide Inventory Data Collection");
-                Environment.Exit(0);
+                //MessageBox.Show("An Error occurred while analyzing Mac Address WMI data", "Tax-Aide Inventory Data Collection");
+                //Environment.Exit(0);
             }
             catch (ManagementException e)
             {
                 MessageBox.Show("An Error occurred while querying Net Adapter Info WMI data: " + e.Message, "Tax-Aide Inventory Data Collection");
-                Environment.Exit(0);
-            }
-        }
-        internal void Net()
-        {
-            try
-            {
-                searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT MACAddress FROM Win32_NetworkAdapter");
-                ManagementObjectCollection net = searcher.Get();
-                foreach (ManagementObject queryObj in net)
-                {//memory already in place insert before
-                    if (queryObj.GetPropertyValue("MACAddress") != null)
-                    {
-                        macAddress = queryObj.GetPropertyValue("MACAddress").ToString();
-                        //Log.WritWTime("MacAddress =" + sysWmi["MACAddress"]);
-                        return; //Only get first real mac address skip the rest
-                    }
-                }
-
-            }
-            catch (ManagementException e)
-            {
-                MessageBox.Show("An Error occurred while querying Net WMI data: " + e.Message, "Tax-Aide Inventory Data Collection");
                 Environment.Exit(0);
             }
         }

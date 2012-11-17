@@ -66,9 +66,9 @@
             // 
             // listViewInvFile
             // 
-            this.listViewInvFile.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.listViewInvFile.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.listViewInvFile.AutoArrange = false;
             this.listViewInvFile.FullRowSelect = true;
             this.listViewInvFile.Location = new System.Drawing.Point(16, 365);
@@ -89,7 +89,7 @@
             this.label3.Size = new System.Drawing.Size(551, 13);
             this.label3.TabIndex = 0;
             this.label3.Text = "The current contents of the Inventory Data File. This window and the columns belo" +
-                "w are resizable for better viewing";
+    "w are resizable for better viewing";
             // 
             // OK
             // 
@@ -141,7 +141,7 @@
             this.label5.Size = new System.Drawing.Size(362, 26);
             this.label5.TabIndex = 0;
             this.label5.Text = "Please enter the Asset Tag that has previously been used in past inventory \r\ndata" +
-                " spreadsheets to identify this system";
+    " spreadsheets to identify this system";
             // 
             // label6
             // 
@@ -151,7 +151,7 @@
             this.label6.Size = new System.Drawing.Size(380, 26);
             this.label6.TabIndex = 0;
             this.label6.Text = "Please enter the Serial Number that has previously been used in past inventory \r\n" +
-                "data spreadsheets to identify the system\r\n";
+    "data spreadsheets to identify the system\r\n";
             // 
             // label7
             // 

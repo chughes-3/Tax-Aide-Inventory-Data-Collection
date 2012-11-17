@@ -11,7 +11,7 @@ namespace InventoryDataCollection
 {
     public class SystemsDataMultiple : IEnumerable
     {
-        public const string fileName = "\\TaxAideInv2012.xml";
+        public const string fileName = "\\TaxAideInv2013.xml";
         public static string path = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
         Dictionary<string, SystemData> syssDataMultiple = new Dictionary<string, SystemData>();
         public SystemsDataMultiple()
@@ -59,11 +59,11 @@ namespace InventoryDataCollection
         }
         public void SystemChangeAsset(string serialNum, string AssetTNew)
         {
-                syssDataMultiple[serialNum].compAssetTag = AssetTNew;
+            syssDataMultiple[serialNum].compAssetTag = AssetTNew;
         }
         public void SystemChangeSerial(string serialNum, string SerialNoHRNew)
         {
-                syssDataMultiple[serialNum].compSerialNumHR = SerialNoHRNew;
+            syssDataMultiple[serialNum].compSerialNumHR = SerialNoHRNew;
         }
         public XElement SystemXElement(string serialNum)
         {//gets the orderedDictionary data for a system and turns it into xml
@@ -119,7 +119,6 @@ namespace InventoryDataCollection
     public class SystemData
     {
 
-
         #region Class Constant definitions ie some, but not all of the inventory spreadsheet column headings
         const string assetTag = "Asset_Tag";
         const string clockSpeed = "Processor_Speed";
@@ -136,9 +135,11 @@ namespace InventoryDataCollection
         const string keyType = "OS_Product_Key_Type";
         const string partialKey = "OS_Partial_Product_Key";
         const string productKey = "OS_Product_Key";
+        const string LAC_Mac = "LAC_Mac";
+        const string LAC_Name = "LAC_Name";
         #endregion
 
-#region System Data Ordered Dictionary definition, this sets data field order in XML file.Named Const fields used elsewhere in program
+        #region System Data Ordered Dictionary definition, this sets data field order in XML file.Named Const fields used elsewhere in program
         OrderedDictionary sysData = new OrderedDictionary()
             {//Setup dictionary entries and therfore order of inventory data fields in XML file, named fields used in program. Non named are ther to fill out spreadsheet
 
@@ -166,10 +167,12 @@ namespace InventoryDataCollection
                 {width, String.Empty},
                 {keyType, String.Empty},
                 {partialKey, String.Empty},
-                {productKey, String.Empty}
+                {productKey, String.Empty},
+                {LAC_Mac, String.Empty},
+                {LAC_Name, String.Empty}
  
             };
-#endregion
+        #endregion
 
         #region Class property declarations
         public string compSerialNum
@@ -247,6 +250,16 @@ namespace InventoryDataCollection
             get { return sysData[productKey].ToString(); }
             set { sysData[productKey] = value; }
         }
+        public string compLAC_Mac
+        {
+            get { return sysData[LAC_Mac].ToString(); }
+            set { sysData[LAC_Mac] = value; }
+        }
+        public string compLAC_Name
+        {
+            get { return sysData[LAC_Name].ToString(); }
+            set { sysData[LAC_Name] = value; }
+        }
 
         #endregion
 
@@ -262,12 +275,14 @@ namespace InventoryDataCollection
         {//loads dictionary with relevant WMI data about system upon which executing
             WMI wmi = new WMI(this);
             wmi.ComputerSystem();
+            wmi.NetSerial();    //sets up mac address and records it. The value may be used by BiosMotherboard below
             wmi.BiosMotherBoard();  //builds manufacturer serial number fields Adds the lines to listbox in method
             wmi.Proc();
             wmi.DiskDrive();
             wmi.OS();
             wmi.PartialKey();
-            wmi.GetProductKey();
+            if (Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Minor == 1)   //only get keys for Win 7
+                wmi.GetProductKey();
         }
         public int count
         {
