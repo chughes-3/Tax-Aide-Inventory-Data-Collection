@@ -108,27 +108,30 @@ namespace InventoryDataCollection
             {
                 searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT Name,NetConnectionID,Manufacturer,PNPDeviceID,MACAddress FROM Win32_NetworkAdapter");
                 ManagementObjectCollection net = searcher.Get();
-                string netCompStr = "xxx";  //to ensure no matchif not assigned
-                var count = net.Cast<ManagementObject>().Where(s => s.GetPropertyValue("NetConnectionID") != null).Count(c => String.Compare((string)c.GetPropertyValue("NetConnectionID"), 0, "Local Area Connection", 0, 20) == 0);   //prior to Windows 8
-                if (count > 0)
-                    netCompStr = net.Cast<ManagementObject>().Where(s => s.GetPropertyValue("NetConnectionID") != null).Where(c => String.Compare((string)c.GetPropertyValue("NetConnectionID"), 0, "Local Area Connection", 0, 20) == 0).Min(s => (string)s.GetPropertyValue("NetConnectionID"));    //should result in lowest numbered local area connection
-                else if (count == 0)
-                {
-                    var cnt = net.Cast<ManagementObject>().Where(s => s.GetPropertyValue("NetConnectionID") != null).Count(c => String.Compare((string)c.GetPropertyValue("NetConnectionID"), 0, "Ethernet", 0, 8) == 0);    //Windows 8
-                    if (cnt > 0)
-                        netCompStr = net.Cast<ManagementObject>().Where(s => s.GetPropertyValue("NetConnectionID") != null).Where(c => String.Compare((string)c.GetPropertyValue("NetConnectionID"), 0, "Ethernet", 0, 8) == 0).Min(s => (string)s.GetPropertyValue("NetConnectionID"));    //should result in lowest numbered local area connection
-                    //may need a wireless here in future for tablets
-                }
-                foreach (ManagementObject queryObj in net)
-                {
-                    if ((string)queryObj.GetPropertyValue("NetConnectionID") == netCompStr)
-                    {
-                        sysData.compLAC_Name = (string)queryObj.GetPropertyValue("Name");
-                        sysData.compLAC_Mac = (string)queryObj.GetPropertyValue("MACAddress");
-                        break;
-                    }
-                    
-                }
+                //PHYISICALADAPTER NOT AVAILABLE IN XP
+                //string netCompStr = "xxx";  //to ensure no matchif not assigned
+                //var count = net.Cast<ManagementObject>().Where(s => s.GetPropertyValue("NetConnectionID") != null).Count(c => String.Compare((string)c.GetPropertyValue("NetConnectionID"), 0, "Local Area Connection", 0, 20) == 0);   //prior to Windows 8
+                //if (count > 0)
+                //    netCompStr = net.Cast<ManagementObject>().Where(s => s.GetPropertyValue("NetConnectionID") != null).Where(c => String.Compare((string)c.GetPropertyValue("NetConnectionID"), 0, "Local Area Connection", 0, 20) == 0).Min(s => (string)s.GetPropertyValue("NetConnectionID"));    //should result in lowest numbered local area connection
+                //else if (count == 0)
+                //{
+                //    var cnt = net.Cast<ManagementObject>().Where(s => s.GetPropertyValue("NetConnectionID") != null).Count(c => String.Compare((string)c.GetPropertyValue("NetConnectionID"), 0, "Ethernet", 0, 8) == 0);    //Windows 8
+                //    if (cnt > 0)
+                //        netCompStr = net.Cast<ManagementObject>().Where(s => s.GetPropertyValue("NetConnectionID") != null).Where(c => String.Compare((string)c.GetPropertyValue("NetConnectionID"), 0, "Ethernet", 0, 8) == 0).Min(s => (string)s.GetPropertyValue("NetConnectionID"));    //should result in lowest numbered local area connection
+                //    //may need a wireless here in future for tablets
+                //}
+                //foreach (ManagementObject queryObj in net)
+                //{
+                //    if ((string)queryObj.GetPropertyValue("NetConnectionID") == netCompStr)
+                //    {
+                //        sysData.compLAC_Name = (string)queryObj.GetPropertyValue("Name");
+                //        sysData.compLAC_Mac = (string)queryObj.GetPropertyValue("MACAddress");
+                //        break;
+                //    }
+                    //
+                //}
+                System.Collections.Generic.List<string> macAddrs = new System.Collections.Generic.List<string>();
+                System.Collections.Generic.List<string> names = new System.Collections.Generic.List<string>();
                 foreach (ManagementObject queryObj in net)
                 {
                     if (queryObj.GetPropertyValue("MACAddress") == null)
@@ -140,17 +143,26 @@ namespace InventoryDataCollection
                         if (queryObj.GetPropertyValue("Manufacturer").ToString().ToLower() == "microsoft")
                             continue;
                     }
-                    string name = queryObj.GetPropertyValue("Name").ToString();
+                    string netConn = (string)queryObj.GetPropertyValue("NetConnectionID"); 
+                    if (netConn != null && netConn.IndexOf("Wireless",StringComparison.CurrentCultureIgnoreCase) != -1)
+                        continue;
+                    string name = (string)queryObj.GetPropertyValue("Name");
+                    if (name == null)
+                        continue;
                     name = name.ToLower();
                     if (name.Contains("bluetooth") || name.Contains("wireless") || name.Contains("wifi") || name.Contains("mobile") || name.Contains("wlan") || name.Contains("802.11"))
                         continue;
                     if (queryObj.GetPropertyValue("PNPDeviceID").ToString().Contains("ROOT"))
                         continue;
-                    macAddress = queryObj.GetPropertyValue("MACAddress").ToString();
-                    return;
+                    macAddrs.Add(queryObj.GetPropertyValue("MACAddress").ToString());
+                    names.Add(queryObj.GetPropertyValue("Name").ToString());
                 }
-                //MessageBox.Show("An Error occurred while analyzing Mac Address WMI data", "Tax-Aide Inventory Data Collection");
-                //Environment.Exit(0);
+                macAddress = macAddrs.Min();
+                string str = "";
+                if (macAddrs.Count > 1)
+                    str = macAddrs.Count.ToString();
+                sysData.compLAC_Name = names[macAddrs.IndexOf(macAddress)] + str;
+                sysData.compLAC_Mac = macAddress;
             }
             catch (ManagementException e)
             {

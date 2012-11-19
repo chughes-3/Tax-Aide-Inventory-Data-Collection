@@ -132,7 +132,7 @@ namespace InventoryDataCollection
             XmlTextWriter wxml = new XmlTextWriter(SystemsDataMultiple.path + SystemsDataMultiple.fileName, null);
             wxml.Formatting = Formatting.Indented;
             wxml.WriteStartDocument(true);
-            wxml.WriteComment("IDC XML Version 2013.01");
+            wxml.WriteComment("IDC XML Version 2013.02");
             wxml.WriteStartElement("Systems");
             ListView.ListViewItemCollection rows = listViewInvFile.Items;
             int serialNumIndex = listViewInvFile.Columns.IndexOfKey("compSerialNum");
