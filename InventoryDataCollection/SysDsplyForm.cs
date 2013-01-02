@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
 
 namespace InventoryDataCollection
 {
@@ -26,10 +26,18 @@ namespace InventoryDataCollection
             textBoxThisSys.AppendText("Memory = " + thisSystemData.compMemory + "MB" + "\r\n");
             textBoxThisSys.AppendText("Disk Size = " + thisSystemData.compDiskSize + "GB" + "\r\n");
             textBoxThisSys.AppendText("Operating System = " + thisSystemData.osCaption + "\r\n");
-            textBoxThisSys.AppendText("OS Version = " + thisSystemData.osVersion + "\r\n");
-            textBoxThisSys.AppendText("Full Key = " + thisSystemData.osProductKey + "\r\n");
-            if (thisSystemData.osProductKey == "BBBBB-BBBBB-BBBBB-BBBBB-BBBBB")
-                textBoxThisSys.AppendText("Partial Product Key = " + thisSystemData.osPartialKey);
+            textBoxThisSys.AppendText("OS Version = " + thisSystemData.osVersion);
+            if (Environment.OSVersion.Version.Major > 5)
+                textBoxThisSys.AppendText("\r\nPartial Product Key = " + thisSystemData.osPartialKey);
+            //Find District number and add it
+            thisSystemData.distNumb = allSystemsData.GetDistnum();
+            if (thisSystemData.distNumb != string.Empty)
+                districtNum.Text = thisSystemData.distNumb;
+            thisSystemData.GetHRData();   //Searches for State file and prior yr spreadsheet for asset /serial num data
+            if (thisSystemData.compAssetTag != string.Empty)
+                entryAssetTag.Text = thisSystemData.compAssetTag;
+            if (thisSystemData.compSerialNumHR != string.Empty)
+                serialNumHR.Text = thisSystemData.compSerialNumHR;
             //Add this system to data storage then set up listview
             allSystemsData.SystemDataAdd(thisSystemData);
             //Now we have keys we can setup listview columns
@@ -93,6 +101,8 @@ namespace InventoryDataCollection
             colIndex = listViewInvFile.Columns.IndexOfKey("compDiskSize");
             listViewInvFile.AutoResizeColumn(colIndex, ColumnHeaderAutoResizeStyle.HeaderSize);
             listViewInvFile.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.HeaderSize);     //sets row column up
+            listViewInvFile.Columns[1].Width = 40;  //district number
+            Log.WritWTime("Form Displayed");
         }
         /// <summary>
         /// Sets up columns - Designer did not do name and tag properly
@@ -101,6 +111,7 @@ namespace InventoryDataCollection
         private void SetLVColumns()
         {
             listViewInvFile.Columns.Add("row", "Row", 30);
+            listViewInvFile.Columns.Add("distNumb", "District", 30);
             listViewInvFile.Columns.Add("compName", "Name", 80);
             listViewInvFile.Columns.Add("compAssetTag", "Asset Tag", 100);
             listViewInvFile.Columns.Add("compSerialNumHR", "Label Serial No.", 80);
@@ -120,6 +131,13 @@ namespace InventoryDataCollection
 
         private void OK_Click(object sender, EventArgs e)
         {
+            int i;
+            if (int.TryParse(districtNum.Text, out i) == false)
+            {
+                MessageBox.Show("Please Enter a District Number", "Tax-Aide Inventory Data Collection");
+                return;
+            }
+            Log.WritWTime("Form Closed by User");
             Close();
         }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -129,28 +147,34 @@ namespace InventoryDataCollection
                 thisSystemData.compAssetTag = entryAssetTag.Text;
             if (serialNumHR.Text != "Serial Number" && thisSystemData.compSerialNumHR != serialNumHR.Text)
                 thisSystemData.compSerialNumHR = serialNumHR.Text;
-            XmlTextWriter wxml = new XmlTextWriter(SystemsDataMultiple.path + SystemsDataMultiple.fileName, null);
-            wxml.Formatting = Formatting.Indented;
-            wxml.WriteStartDocument(true);
-            wxml.WriteComment("IDC XML Version 2013.02");
-            wxml.WriteStartElement("Systems");
+            XElement xmlIDC = new XElement("systems");
+            xmlIDC.Add(new XComment(Start.xmlFileRev));
             ListView.ListViewItemCollection rows = listViewInvFile.Items;
             int serialNumIndex = listViewInvFile.Columns.IndexOfKey("compSerialNum");
             for (int i = 0; i < listViewInvFile.Items.Count; i++)
             {
                 string serial = rows[i].SubItems[serialNumIndex].Text;
-                System.Xml.Linq.XElement xsystem = allSystemsData.SystemXElement(serial.ToString());
-                xsystem.WriteTo(wxml);
+                XElement xsystem = allSystemsData.SystemXElement(serial);
+                xmlIDC.Add(xsystem);
             }
             if (listViewInvFile.Items.Count == 1)
             {//fakes out excel so it puts in column headers
-                wxml.WriteStartElement("system");
-                wxml.WriteEndElement();
+                xmlIDC.Add(new XElement("system"));
             }
-            wxml.WriteEndElement();
-            wxml.WriteEndDocument();
-            wxml.Close();
+            xmlIDC.Save(System.IO.Path.Combine(Start.path, Start.fileName));
             Environment.Exit(0);
+        }
+
+        private void districtNum_Enter(object sender, EventArgs e)
+        {
+            if (districtNum.Text == "District Number")
+                districtNum.Text = "";
+        }
+        private void districtNum_Leave(object sender, EventArgs e)
+        {
+            thisSystemData.distNumb = districtNum.Text.Trim();
+            ListView.ListViewItemCollection rows = listViewInvFile.Items;
+            rows[lvItemIndexThisSys].SubItems[1].Text = districtNum.Text.Trim();
         }
 
         private void entryAssetTag_Enter(object sender, EventArgs e)
@@ -249,6 +273,7 @@ namespace InventoryDataCollection
             rowAction.ShowDialog();
             lvItemIndexThisSys = listViewInvFile.Items.IndexOfKey("ThisSys");
         }
+
 
     }
 }

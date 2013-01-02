@@ -30,7 +30,6 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SysDsplyForm));
             this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.listViewInvFile = new System.Windows.Forms.ListView();
             this.label3 = new System.Windows.Forms.Label();
             this.OK = new System.Windows.Forms.Button();
@@ -43,6 +42,8 @@
             this.buttonOK = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.textBoxThisSys = new System.Windows.Forms.TextBox();
+            this.districtNum = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -55,15 +56,6 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Inventory Data for this System";
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(29, 274);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(501, 39);
-            this.label2.TabIndex = 0;
-            this.label2.Text = resources.GetString("label2.Text");
-            // 
             // listViewInvFile
             // 
             this.listViewInvFile.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -71,11 +63,11 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listViewInvFile.AutoArrange = false;
             this.listViewInvFile.FullRowSelect = true;
-            this.listViewInvFile.Location = new System.Drawing.Point(16, 365);
+            this.listViewInvFile.Location = new System.Drawing.Point(16, 376);
             this.listViewInvFile.MultiSelect = false;
             this.listViewInvFile.Name = "listViewInvFile";
-            this.listViewInvFile.Size = new System.Drawing.Size(642, 234);
-            this.listViewInvFile.TabIndex = 0;
+            this.listViewInvFile.Size = new System.Drawing.Size(642, 223);
+            this.listViewInvFile.TabIndex = 5;
             this.listViewInvFile.UseCompatibleStateImageBehavior = false;
             this.listViewInvFile.View = System.Windows.Forms.View.Details;
             this.listViewInvFile.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewInvFile_ColumnClick);
@@ -84,7 +76,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(16, 340);
+            this.label3.Location = new System.Drawing.Point(16, 360);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(551, 13);
             this.label3.TabIndex = 0;
@@ -146,17 +138,16 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(165, 224);
+            this.label6.Location = new System.Drawing.Point(165, 266);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(380, 26);
+            this.label6.Size = new System.Drawing.Size(291, 13);
             this.label6.TabIndex = 0;
-            this.label6.Text = "Please enter the Serial Number that has previously been used in past inventory \r\n" +
-    "data spreadsheets to identify the system\r\n";
+            this.label6.Text = "Please enter the District Number in which this system resides\r\n";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(29, 274);
+            this.label7.Location = new System.Drawing.Point(29, 301);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(509, 39);
             this.label7.TabIndex = 0;
@@ -170,7 +161,7 @@
             this.buttonOK.Location = new System.Drawing.Point(493, 605);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(75, 38);
-            this.buttonOK.TabIndex = 4;
+            this.buttonOK.TabIndex = 7;
             this.buttonOK.Text = "OK";
             this.buttonOK.UseVisualStyleBackColor = true;
             this.buttonOK.Click += new System.EventHandler(this.OK_Click);
@@ -179,10 +170,10 @@
             // 
             this.button2.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.Location = new System.Drawing.Point(564, 275);
+            this.button2.Location = new System.Drawing.Point(564, 302);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 38);
-            this.button2.TabIndex = 4;
+            this.button2.TabIndex = 6;
             this.button2.Text = "OK";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.OK_Click);
@@ -193,8 +184,28 @@
             this.textBoxThisSys.Multiline = true;
             this.textBoxThisSys.Name = "textBoxThisSys";
             this.textBoxThisSys.ReadOnly = true;
-            this.textBoxThisSys.Size = new System.Drawing.Size(258, 152);
-            this.textBoxThisSys.TabIndex = 5;
+            this.textBoxThisSys.Size = new System.Drawing.Size(258, 142);
+            this.textBoxThisSys.TabIndex = 1;
+            // 
+            // districtNum
+            // 
+            this.districtNum.Location = new System.Drawing.Point(32, 263);
+            this.districtNum.Name = "districtNum";
+            this.districtNum.Size = new System.Drawing.Size(112, 20);
+            this.districtNum.TabIndex = 4;
+            this.districtNum.Text = "District Number";
+            this.districtNum.Enter += new System.EventHandler(this.districtNum_Enter);
+            this.districtNum.Leave += new System.EventHandler(this.districtNum_Leave);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(165, 227);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(334, 26);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "Please enter the Serial Number that has previously been used in past \r\ninventory " +
+    "data spreadsheets to identify this system";
             // 
             // SysDsplyForm
             // 
@@ -204,7 +215,9 @@
             this.ClientSize = new System.Drawing.Size(670, 655);
             this.Controls.Add(this.textBoxThisSys);
             this.Controls.Add(this.label6);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.label5);
+            this.Controls.Add(this.districtNum);
             this.Controls.Add(this.serialNumHR);
             this.Controls.Add(this.entryAssetTag);
             this.Controls.Add(this.label4);
@@ -214,11 +227,10 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.listViewInvFile);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Name = "SysDsplyForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "TaxAide Inventory Data Collection";
+            this.Text = "Tax-Aide Inventory Data Collection";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -228,7 +240,6 @@
         #endregion
 
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ListView listViewInvFile;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button OK;
@@ -241,6 +252,8 @@
         private System.Windows.Forms.Button buttonOK;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.TextBox textBoxThisSys;
+        private System.Windows.Forms.TextBox districtNum;
+        private System.Windows.Forms.Label label2;
     }
 }
 

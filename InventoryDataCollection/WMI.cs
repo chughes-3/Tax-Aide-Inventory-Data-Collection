@@ -32,17 +32,22 @@ namespace InventoryDataCollection
                 {
                     string name = regExpCommaFind.Replace(queryObj.GetPropertyValue("Name").ToString(), "");
                     sysData.compName = name.Trim();
+                    Log.WriteStr("WMIComputerSystem: name: " + sysData.compName);
                     string mfr = regExpCommaFind.Replace(queryObj.GetPropertyValue("Manufacturer").ToString(), "");
                     sysData.compManufacturer = mfr.Trim();
+                    Log.WriteStr(" , Mfr: " + sysData.compManufacturer);
                     string model = regExpCommaFind.Replace(queryObj.GetPropertyValue("Model").ToString(), "");
                     sysData.compModel = model.Trim();
+                    Log.WriteStr(" , Model: " + sysData.compModel);
                     memory = (UInt64)queryObj.GetPropertyValue("TotalPhysicalMemory");
                     sysData.compMemory = (memory / 1048576).ToString();
+                    Log.WritW(" , Mem: " + sysData.compMemory);
                 }
             }
             catch (ManagementException e)
             {
                 MessageBox.Show("An Error occurred while querying ComputerSystem WMI data: " + e.Message, "Tax-Aide Inventory Data Collection");
+                Log.WritW("An Error occurred while querying ComputerSystem WMI data: " + e.Message);
                 Environment.Exit(0);
             }
         }
@@ -63,6 +68,7 @@ namespace InventoryDataCollection
                     {// IS alphabetic or space therefore presumed not to be real serial number
                         sysData.compSerialNum = string.Empty;
                     }
+                    Log.WritW("WMIbios: serial: " + sysData.compSerialNum);
                     if (sysData.compSerialNum == string.Empty)
                     {
                         ManagementObjectSearcher searcherbb = new ManagementObjectSearcher("root\\CIMV2", "SELECT Manufacturer,SerialNumber FROM Win32_Baseboard");
@@ -77,6 +83,7 @@ namespace InventoryDataCollection
                             if (item.GetPropertyValue("SerialNumber") != null)
                             {
                                 sysData.compSerialNum = item.GetPropertyValue("SerialNumber").ToString().Trim();
+                                Log.WritW("Baseboard: serial: " + sysData.compSerialNum);
                             }
                         }
                     }
@@ -95,10 +102,12 @@ namespace InventoryDataCollection
                 {//use mac address since nothing else available
                     sysData.compSerialNum = macAddress;
                 }
+                Log.WritW("End of BiosBaseboard: serial: " + sysData.compSerialNum);
             }
             catch (ManagementException e)
             {
                 MessageBox.Show("An Error occurred while querying Baseboard or BIOS WMI data: " + e.Message, "Tax-Aide Inventory Data Collection");
+                Log.WritW("An Error occurred while querying BIOS,Baseboard WMI data: " + e.Message);
                 Environment.Exit(0);
             }
         }
@@ -143,6 +152,7 @@ namespace InventoryDataCollection
                         if (queryObj.GetPropertyValue("Manufacturer").ToString().ToLower() == "microsoft")
                             continue;
                     }
+                    Log.WritW("WMINetAdapter: MAC: " + queryObj.GetPropertyValue("MACAddress"));
                     string netConn = (string)queryObj.GetPropertyValue("NetConnectionID"); 
                     if (netConn != null && netConn.IndexOf("Wireless",StringComparison.CurrentCultureIgnoreCase) != -1)
                         continue;
@@ -157,16 +167,22 @@ namespace InventoryDataCollection
                     macAddrs.Add(queryObj.GetPropertyValue("MACAddress").ToString());
                     names.Add(queryObj.GetPropertyValue("Name").ToString());
                 }
+                Log.WriteStr("MAC Address count : " + macAddrs.Count.ToString());
                 macAddress = macAddrs.Min();
                 string str = "";
                 if (macAddrs.Count > 1)
                     str = macAddrs.Count.ToString();
-                sysData.compLAC_Name = names[macAddrs.IndexOf(macAddress)] + str;
-                sysData.compLAC_Mac = macAddress;
+                if (macAddrs.Count > 0)
+                {
+                    sysData.compLAC_Name = names[macAddrs.IndexOf(macAddress)] + str;
+                    sysData.compLAC_Mac = macAddress; 
+                }
+                    Log.WritW("NetAdapter Final: serial: " + sysData.compLAC_Mac + "  NetAdapterName: " + sysData.compLAC_Name);
             }
             catch (ManagementException e)
             {
                 MessageBox.Show("An Error occurred while querying Net Adapter Info WMI data: " + e.Message, "Tax-Aide Inventory Data Collection");
+                Log.WritW("An Error occurred while querying Network WMI data: " + e.Message);
                 Environment.Exit(0);
             }
         }
@@ -179,12 +195,14 @@ namespace InventoryDataCollection
                 foreach (ManagementObject queryObj in proc)
                 {//memory already in place insert before
                     sysData.compClockSpeed = regExpCommaFind.Replace(queryObj.GetPropertyValue("MaxClockSpeed").ToString(), "");
+                    Log.WritW("Proc: speed: " + sysData.compClockSpeed);
                 }
 
             }
             catch (ManagementException e)
             {
                 MessageBox.Show("An Error occurred while querying Processor WMI data: " + e.Message, "Tax-Aide Inventory Data Collection");
+                Log.WritW("An Error occurred while querying Processor WMI data: " + e.Message);
                 Environment.Exit(0);
             }
         }
@@ -205,13 +223,14 @@ namespace InventoryDataCollection
                         diskSize += (UInt64)queryObj.GetPropertyValue("Size");
                     }
                 }
-                //Log.WritWTime("disk size = " + (diskSize/1073741824).ToString());
+                Log.WritW("disk size = " + (diskSize/1073741824).ToString());
                 sysData.compDiskSize = (diskSize / 1073741824).ToString();
 
             }
             catch (ManagementException e)
             {
                 MessageBox.Show("An Error occurred while querying WMI data: " + e.Message, "Tax-Aide Inventory Data Collection");
+                Log.WritW("An Error occurred while querying Disk WMI data: " + e.Message);
                 Environment.Exit(0);
             }
         }
@@ -236,10 +255,12 @@ namespace InventoryDataCollection
                         sysData.osWidth = queryObj.GetPropertyValue("OSArchitecture").ToString();
                     }
                 }
+                Log.WritW("Os Caption: " + sysData.osCaption);
             }
             catch (ManagementException e)
             {
                 MessageBox.Show("An Error occurred while querying OperatingSystem WMI data: " + e.Message, "Tax-Aide Inventory Data Collection");
+                Log.WritW("An Error occurred while querying OperatingSystem WMI data: " + e.Message);
                 Environment.Exit(0);
             }
         }
@@ -259,10 +280,12 @@ namespace InventoryDataCollection
                         break;
                     }
                 }
+                Log.WritW("OS Partial Key: " + sysData.osPartialKey);
             }
             catch (ManagementException e)
             {
                 MessageBox.Show("An Error occurred while querying SoftwareLicensingProduct WMI data: " + e.Message, "Tax-Aide Inventory Data Collection");
+                Log.WritW("An Error occurred while querying OS Partial Key WMI data: " + e.Message);
                 Environment.Exit(0);
             }
         }
@@ -366,6 +389,7 @@ namespace InventoryDataCollection
                     }
                 }
             }
+            Log.WritW("OS product Key Decoded: ");
             return new string(decodedChars);
         }
         string GetString(byte[] bytes, int index)

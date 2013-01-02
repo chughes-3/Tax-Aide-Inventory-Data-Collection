@@ -117,11 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="label2.Text" xml:space="preserve">
-    <value>The data will be saved in the file TaxAideInvData.csv located in the same folder as this program
-Take this program and the csv file and execute the program on each computer. Each computer's
-inventory data in turn will be saved to the csv file. This csv file can be opened by a spreadsheet program.</value>
-  </data>
   <data name="label4.Text" xml:space="preserve">
     <value>If the Machine Readable Serial number includes any punctuation, please 
 make sure that this punctuation gets included in future inventory spreadsheets. 
