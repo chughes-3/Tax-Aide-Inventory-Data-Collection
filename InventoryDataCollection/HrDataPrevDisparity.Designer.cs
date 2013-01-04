@@ -228,6 +228,7 @@
             this.Controls.Add(this.groupBoxAt);
             this.Controls.Add(this.groupBoxSn);
             this.Name = "HrDataPrevDisparity";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Tax-Aide Inventory Data Collection";
             this.groupBoxSn.ResumeLayout(false);
             this.groupBoxSn.PerformLayout();

@@ -73,10 +73,25 @@ namespace InventoryDataCollection
         public string GetDistnum()
         {
             var dN = syssDataMultiple.FirstOrDefault(s => s.Value.distNumb != string.Empty );
-            if (dN.Value== null)
+            if (dN.Value == null)
                 return string.Empty;
             else
-                return dN.Value.distNumb;
+            {
+                var kv = syssDataMultiple.FirstOrDefault(s => s.Value.distNumb == string.Empty);
+                if (kv.Value == null)   //ie we have the district number in all entries
+                    return dN.Value.distNumb;
+                else
+                {
+                    //Update any empty district numbers with the found district number
+                    //var kvs = syssDataMultiple.Where(s=> s.Value.distNumb == string.Empty).Select(kvi => syssDataMultiple[kvi.Key].distNumb = dN.Value.distNumb);
+                    var kvs = syssDataMultiple.Where(s => s.Value.distNumb == string.Empty);
+                    foreach (var item in kvs)
+                    {
+                        syssDataMultiple[item.Key].distNumb = dN.Value.distNumb;
+                    }
+                    return dN.Value.distNumb;
+                }
+            }
         }
 
         IEnumerator IEnumerable.GetEnumerator()

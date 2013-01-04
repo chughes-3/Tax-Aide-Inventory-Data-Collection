@@ -262,9 +262,9 @@ namespace InventoryDataCollection
                 // Lower casing field names could also be done with regex as in
                 // Regex.Replace( xml, @"<[^<>]+>", m => { return m.Value.ToLower(); }, RegexOptions.Multiline | RegexOptions.Singleline);
                 // this requires using a streamreader or some other method of getting teh xelement to a string
-                var xDataPrevCollection =xDataPrev.Elements("system").Select(elsys => new XElement("system", elsys.Elements().Select(fld => new XElement(fld.Name.ToString().ToLower(), fld.Value))));  //get all field names to lower case
+                var xDataPrevCollection= xDataPrev.Elements("system").Select(elsys => new XElement("system", elsys.Elements().Select(fld => new XElement(fld.Name.ToString().ToLower(), fld.Value))));  //get all field names to lower case
                 //At this point we have a collection of XElements each labeled system, we do NOT have the higher level "systems" XElement anymore and since we just need to do another Linq statement we do not need to cast the collection back to an XElement.
-                xDataThisSysIDCPrev = xDataPrevCollection.FirstOrDefault(el => el.Element("mr_serial_number").Value == this.compSerialNum);
+                xDataThisSysIDCPrev = xDataPrevCollection.FirstOrDefault(el => el.Element("mr_serial_number") == null ? false : el.Element("mr_serial_number").Value == this.compSerialNum);
                 if (xDataThisSysIDCPrev != null)
                 {
                     dataDisparityForm.txtBxIDCPrvSn.Text = xDataThisSysIDCPrev.Element("mfg_serial_number").Value;

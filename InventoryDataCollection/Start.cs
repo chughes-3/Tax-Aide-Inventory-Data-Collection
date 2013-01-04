@@ -29,7 +29,7 @@ namespace InventoryDataCollection
         [STAThread]
         static void Main()
         {
-            DateTime endDate = new DateTime(2013, 1, 31);
+            DateTime endDate = new DateTime(2013, 8, 31);
 #if Log
             endDemo = DateTime.Now.AddDays(14);     
 #endif
@@ -61,7 +61,7 @@ namespace InventoryDataCollection
                     if (!InternetPresent())
                     {
                         Log.WritW("No Internet");
-                        DialogResult diagResp = MessageBox.Show("The download file from the National Inventory database is not present.\r\n This file allows automatic entry of many fields that would otherwise have to be typed.\r\nIn order to obtain it connect this system to the Internet and restart this program. \r\n\r\nExit to allow internet connection?", mbCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
+                        DialogResult diagResp = MessageBox.Show("The download file from the National Inventory database is not present.\r\n This file allows automatic entry of many fields that would otherwise have to be typed.\r\nIn order to obtain it connect this system to the Internet and restart this program. \r\n\r\nExit to allow internet connection?", mbCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                         if (diagResp == DialogResult.Yes)
                             Environment.Exit(0);
                         else
@@ -70,7 +70,7 @@ namespace InventoryDataCollection
                     else
                     {
                         Log.WritW("Internet Present");
-                        DialogResult diagResp = MessageBox.Show("The download file from the National Inventory database is not present.\r\n This file allows automatic entry of many fields that would otherwise have to be typed.\r\nThis system has an Internet connection. \r\n\r\nObtain the file now?", mbCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
+                        DialogResult diagResp = MessageBox.Show("The download file from the National Inventory database is not present.\r\n This file allows automatic entry of many fields that would otherwise have to be typed.\r\nThis system has an Internet connection. \r\n\r\nObtain the file now?", mbCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                         if (diagResp == DialogResult.Yes)
                             ObtainDbDnLoad();
                         return;
@@ -81,8 +81,8 @@ namespace InventoryDataCollection
             {
                 if (File.Exists(Path.Combine(path, fileNameInvDBdnload)))
                 {
-                    Log.WritW("TaIdcXML prev does NOT exits, DBdnload does exist");
-                    DialogResult diagResp = MessageBox.Show("Last year's IDC file \"TaxAideInv2012.xml\" does not exist in the same directory as this program.\r\n This file allows additional data checking above and beyond the file downloaded fromt the National Database.\r\nIt is recommended that the program be exited and the file obtained. \r\n\r\nExit the program?", mbCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
+                    Log.WritW("TaIdcXML prev does NOT exist, DBdnload does exist");
+                    DialogResult diagResp = MessageBox.Show("Last year's IDC file \"TaxAideInv2012.xml\" does not exist in the same directory as this program.\r\nThis file allows additional data checking above and beyond the file downloaded from the National Database.\r\nIt is recommended that the program be exited and the file obtained. \r\n\r\nExit the program?", mbCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                     if (diagResp == DialogResult.Yes)
                         Environment.Exit(1);
                     else
@@ -93,10 +93,10 @@ namespace InventoryDataCollection
                     if (InternetPresent())
                     {
                         Log.WritW("Neither file exists, Internet exists");
-                        DialogResult diagResp = MessageBox.Show("It is recommended that last year's IDC file \"TaxAideInv2012.xml\" and/or the State's download file from the National Inventory database be present in the same directory as this program.\r\n These files allow automatic entry of many fields that would otherwise have to be typed.\r\nThis system has an Internet connection. \r\n\r\nThis program can download the file. Obtain the file now?", mbCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
+                        DialogResult diagResp = MessageBox.Show("It is recommended that last year's IDC file \"TaxAideInv2012.xml\" and/or the State's download file from the National Inventory database be present in the same directory as this program.\r\n These files allow automatic entry of many fields that would otherwise have to be typed.\r\nThis system has an Internet connection. \r\n\r\nThis program can download the file. Obtain the file now?", mbCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                         if (diagResp == DialogResult.Yes)
                             ObtainDbDnLoad();
-                        diagResp = MessageBox.Show("Last year's IDC file \"TaxAideInv2012.xml\" does not exist in the same directory as this program.\r\n This file allows additional data checking above and beyond the file downloaded fromt the National Database.\r\nIt is recommended that the program be exited and the file obtained. \r\n\r\nExit the program?", mbCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
+                        diagResp = MessageBox.Show("Last year's IDC file \"TaxAideInv2012.xml\" does not exist in the same directory as this program.\r\n This file allows additional data checking above and beyond the file downloaded fromt the National Database.\r\nIt is recommended that the program be exited and the file obtained. \r\n\r\nExit the program?", mbCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                         if (diagResp == DialogResult.Yes)
                             Environment.Exit(0);
                         else
@@ -107,7 +107,7 @@ namespace InventoryDataCollection
                     else
                     {
                         Log.WritW("Neither file exists, No Internet");
-                        DialogResult diagResp = MessageBox.Show("The download file from the National Inventory database is not present.\r\n This file allows automatic entry of many fields that would otherwise have to be typed.\r\nIn order to obtain it connect this system to the Internet and restart this program. \r\n\r\nExit to allow internet connection?", mbCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
+                        DialogResult diagResp = MessageBox.Show("The download file from the National Inventory database is not present.\r\n This file allows automatic entry of many fields that would otherwise have to be typed.\r\nIn order to obtain it connect this system to the Internet and restart this program. \r\n\r\nExit to allow internet connection?", mbCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                         if (diagResp == DialogResult.Yes)
                             Environment.Exit(0);
                         else
@@ -119,17 +119,21 @@ namespace InventoryDataCollection
 
         private static void ObtainDbDnLoad()
         {
+
             string URI = "http://www.taxaideaarp.org/NLKAccess/mrhrlink/stateHrMrlnk.php";
             string param = "state=";
             ChooseSplitState ss = new ChooseSplitState();
             ss.ShowDialog();    //ss.splitState = css code
             param += ss.splitState;
+            System.Threading.Thread pBar = new System.Threading.Thread(() => new Progress().Show());
+            pBar.Start();
             using (WebClient webclient = new WebClient())
             {
                 webclient.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
                 string HtmlResult = webclient.UploadString(URI, param);
                 File.WriteAllText(Path.Combine(path, fileNameInvDBdnload), HtmlResult);
             }
+            pBar.Abort();
         }
 
         private static bool InternetPresent()
