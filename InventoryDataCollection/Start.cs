@@ -10,7 +10,6 @@ namespace InventoryDataCollection
         /// <summary>
         /// The main entry point for the application.
         /// The data structure and field names that capture the inventory spreadsheet format are in the SystemData File SystemData Class
-        /// The  Inventory Data file name is in SystemData File SystemsDataMultiple Class
         /// Column name strings for the SysDsplyForm MUST be same as exposed property names of SystemData class. The form Column order is defined in form code not form designer
         /// An instance of the SystemsDataMultiple Class is created. During instance initialization the existing XML file is read
         /// Existing XML file is read in and each system entry is stored in an entry in the SystemsDataMultiple dictionary. See SystemData File.

@@ -79,6 +79,7 @@
             this.textboxAssetTag.TabIndex = 6;
             this.textboxAssetTag.Text = "Asset Tag";
             this.textboxAssetTag.Enter += new System.EventHandler(this.textboxAssetTag_Enter);
+            this.textboxAssetTag.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.textboxAssetTag.Leave += new System.EventHandler(this.textboxAssetTag_Leave);
             // 
             // labelAssetTag
@@ -98,6 +99,7 @@
             this.textBoxSerialNo.TabIndex = 7;
             this.textBoxSerialNo.Text = "Serial Number";
             this.textBoxSerialNo.Enter += new System.EventHandler(this.textBoxSerialNo_Enter);
+            this.textBoxSerialNo.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.textBoxSerialNo.Leave += new System.EventHandler(this.textBoxSerialNo_Leave);
             // 
             // labelSerialNo

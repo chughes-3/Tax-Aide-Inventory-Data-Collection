@@ -280,6 +280,5 @@ namespace InventoryDataCollection
             lvItemIndexThisSys = listViewInvFile.Items.IndexOfKey("ThisSys");
         }
 
-
     }
 }
