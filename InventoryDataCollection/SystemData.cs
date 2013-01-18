@@ -68,6 +68,24 @@ namespace InventoryDataCollection
             };
         #endregion
 
+        #region Field list for those fields that are saved from prior year and copied into current year
+        List<string> hrFields = new List<string>()
+        {
+		        "state",
+                assetTag , 
+                "category",
+                "provider",
+                manufacturerHR, 
+                "mfg_model",
+                serialNumberHR, 
+                "mfg_date",
+                "status",
+                "notes",
+                "custodial_vol_id",
+                "custodian"
+        };
+        #endregion
+
         #region Class property declarations
         public string compSerialNum
         {
@@ -255,20 +273,28 @@ namespace InventoryDataCollection
                     }
                 }
             }
-            filePrevPath = System.IO.Path.Combine(Start.path, Start.fileNamePrevVer);
+            filePrevPath = System.IO.Path.Combine(Start.path, Start.fileNamePrevEir);
+            if (!System.IO.File.Exists(filePrevPath))   //if prior yr EIR based file exists it ignores prior yr xml file
+                filePrevPath = System.IO.Path.Combine(Start.path, Start.fileNamePrevVer);
             if (System.IO.File.Exists(filePrevPath))
             {
                 xDataPrev = XElement.Load(filePrevPath);
                 // Lower casing field names could also be done with regex as in
                 // Regex.Replace( xml, @"<[^<>]+>", m => { return m.Value.ToLower(); }, RegexOptions.Multiline | RegexOptions.Singleline);
                 // this requires using a streamreader or some other method of getting teh xelement to a string
-                var xDataPrevCollection= xDataPrev.Elements("system").Select(elsys => new XElement("system", elsys.Elements().Select(fld => new XElement(fld.Name.ToString().ToLower(), fld.Value))));  //get all field names to lower case
+                var xDataPrevCollection = xDataPrev.Elements("system").Select(elsys => new XElement("system", elsys.Elements().Select(fld => new XElement(fld.Name.ToString().ToLower(), fld.Value))));  //get all field names to lower case
                 //At this point we have a collection of XElements each labeled system, we do NOT have the higher level "systems" XElement anymore and since we just need to do another Linq statement we do not need to cast the collection back to an XElement.
                 xDataThisSysIDCPrev = xDataPrevCollection.FirstOrDefault(el => el.Element("mr_serial_number") == null ? false : el.Element("mr_serial_number").Value == this.compSerialNum);
                 if (xDataThisSysIDCPrev != null)
                 {
-                    dataDisparityForm.txtBxIDCPrvSn.Text = xDataThisSysIDCPrev.Element("mfg_serial_number").Value;
-                    dataDisparityForm.txtBxATagIDC.Text = xDataThisSysIDCPrev.Element("asset_tag").Value;
+                    //just load all the hr fields here with trim and then do the 2 statement belwo from the dictionary
+                    //hrFields.Select(fld => sysData[fld] = (string)xDataThisSysIDCPrev.Element(fld));
+                    foreach (var item in hrFields)
+                    {
+                       sysData[item] = (string)xDataThisSysIDCPrev.Element(item);
+                    }
+                    dataDisparityForm.txtBxIDCPrvSn.Text = xDataThisSysIDCPrev.Element("mfg_serial_number") != null ? xDataThisSysIDCPrev.Element("mfg_serial_number").Value : string.Empty;
+                    dataDisparityForm.txtBxATagIDC.Text = xDataThisSysIDCPrev.Element("asset_tag") != null ? xDataThisSysIDCPrev.Element("asset_tag").Value : string.Empty;
                 }
             }
             //next check data disparities & set radio buttons on form

@@ -22,6 +22,7 @@ namespace InventoryDataCollection
         public const string xmlFileRev = "IDC XML Version 2013.03"; //put here to synchronize with file name used in Form Closes comment string in xml file output
         public const string fileNameInvDBdnload = "MrHrLink4IDC2013.xml";  //Used by SystemData class but here to put all strings in same place
         public const string fileNamePrevVer = "TaxAideInv2012.xml";
+        public const string fileNamePrevEir = "TaxAideInvEIR2012.xml";
         public static string path = Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
         public static string mbCaption = "Tax-Aide Inventory Data Collection";
 
@@ -50,13 +51,13 @@ namespace InventoryDataCollection
 
         private static void TestPriorYrFiles()
         {
-            if (File.Exists(Path.Combine(path, fileNamePrevVer)))
+            if (File.Exists(Path.Combine(path, fileNamePrevVer)) || File.Exists(Path.Combine(path,fileNamePrevEir)))
             {
                 if (File.Exists(Path.Combine(path, fileNameInvDBdnload)))
                     return;
                 else
                 {
-                    Log.WritW("TaIdcXMl Prev exists, DBdnload not exist");
+                    Log.WritW("TaIdcXMl or TaIdcEIR Prev exists, DBdnload not exist");
                     if (!InternetPresent())
                     {
                         Log.WritW("No Internet");
@@ -81,7 +82,7 @@ namespace InventoryDataCollection
                 if (File.Exists(Path.Combine(path, fileNameInvDBdnload)))
                 {
                     Log.WritW("TaIdcXML prev does NOT exist, DBdnload does exist");
-                    DialogResult diagResp = MessageBox.Show("Last year's IDC file \"TaxAideInv2012.xml\" does not exist in the same directory as this program.\r\nThis file allows additional data checking above and beyond the file downloaded from the National Database.\r\nIt is recommended that the program be exited and the file obtained. \r\n\r\nExit the program?", mbCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
+                    DialogResult diagResp = MessageBox.Show("A file containing last year's IDC data (either last year's IDC file or a file generated from EIR2012) does not exist in the same directory as this program.\r\nThis file allows additional data checking above and beyond the file downloaded from the National Database.\r\nIt is recommended that the program be exited and the file obtained. \r\n\r\nExit the program?", mbCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                     if (diagResp == DialogResult.Yes)
                         Environment.Exit(1);
                     else
@@ -92,10 +93,10 @@ namespace InventoryDataCollection
                     if (InternetPresent())
                     {
                         Log.WritW("Neither file exists, Internet exists");
-                        DialogResult diagResp = MessageBox.Show("It is recommended that last year's IDC file \"TaxAideInv2012.xml\" and/or the State's download file from the National Inventory database be present in the same directory as this program.\r\n These files allow automatic entry of many fields that would otherwise have to be typed.\r\nThis system has an Internet connection. \r\n\r\nThis program can download the file. Obtain the file now?", mbCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
+                        DialogResult diagResp = MessageBox.Show("It is recommended that a file containing last year's IDC data (either last year's IDC file or a file generated from EIR2012) and/or the State's download file from the National Inventory database be present in the same directory as this program.\r\n These files allow automatic entry of many fields that would otherwise have to be typed.\r\nThis system has an Internet connection. \r\n\r\nThis program can download a file. Obtain the file now?", mbCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                         if (diagResp == DialogResult.Yes)
                             ObtainDbDnLoad();
-                        diagResp = MessageBox.Show("Last year's IDC file \"TaxAideInv2012.xml\" does not exist in the same directory as this program.\r\n This file allows additional data checking above and beyond the file downloaded fromt the National Database.\r\nIt is recommended that the program be exited and the file obtained. \r\n\r\nExit the program?", mbCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
+                        diagResp = MessageBox.Show("It is recommended that a file containing last year's IDC data (either last year's IDC file or a file generated from EIR2012) be in the same directory as this program.\r\n This file allows additional data checking above and beyond the file downloaded fromt the National Database.\r\nIt is recommended that the program be exited and the file obtained. \r\n\r\nExit the program?", mbCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                         if (diagResp == DialogResult.Yes)
                             Environment.Exit(0);
                         else
