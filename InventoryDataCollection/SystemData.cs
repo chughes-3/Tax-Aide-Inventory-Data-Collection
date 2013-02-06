@@ -288,11 +288,20 @@ namespace InventoryDataCollection
                 if (xDataThisSysIDCPrev != null)
                 {
                     //just load all the hr fields here with trim and then do the 2 statement belwo from the dictionary
-                    //hrFields.Select(fld => sysData[fld] = (string)xDataThisSysIDCPrev.Element(fld));
+                    //hrFields.Select(fld => { sysData[fld] = (string)xDataThisSysIDCPrev.Element(fld); return sysData[fld]; });
                     foreach (var item in hrFields)
                     {
-                       sysData[item] = (string)xDataThisSysIDCPrev.Element(item);
+                        sysData[item] = (string)xDataThisSysIDCPrev.Element(item);
                     }
+                    //string str = "";
+                    //for (int i = 0; i < sysData.Count; i++ )
+                    //{
+                    //    if (sysData[i] != null)
+                    //    {
+                    //        str += sysData[i].ToString() + "\r\n"; 
+                    //    }
+                    //}
+                    //System.Windows.Forms.MessageBox.Show(str);
                     dataDisparityForm.txtBxIDCPrvSn.Text = xDataThisSysIDCPrev.Element("mfg_serial_number") != null ? xDataThisSysIDCPrev.Element("mfg_serial_number").Value : string.Empty;
                     dataDisparityForm.txtBxATagIDC.Text = xDataThisSysIDCPrev.Element("asset_tag") != null ? xDataThisSysIDCPrev.Element("asset_tag").Value : string.Empty;
                 }

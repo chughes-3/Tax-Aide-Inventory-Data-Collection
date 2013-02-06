@@ -35,9 +35,10 @@ namespace InventoryDataCollection
                     Environment.Exit(1);
             }
             foreach (XElement sysEl in xmlSystems.Elements("system"))
-            {//for 2013 the xml field defn are all lower case whereas field and Column names are mixed.
-                if ((string)sysEl.Element(SystemData.serialNumber) != null)
-                    syssDataMultiple.Add(sysEl.Element(SystemData.serialNumber).Value, new SystemData(sysEl));
+            {//for 2013 the xml field defn are all lower case whereas field and Column names are mixed case in prior yr and early 13. Make all lower case.
+                XElement sysElLower = new XElement("system", sysEl.Elements().Select(el => new XElement(el.Name.ToString().ToLower(), el.Value)));
+                if ((string)sysElLower.Element(SystemData.serialNumber) != null)
+                    syssDataMultiple.Add(sysElLower.Element(SystemData.serialNumber).Value, new SystemData(sysElLower));
             }
             Log.WritWTime("SystemsDataMultiple: File Read in completed");
         }
