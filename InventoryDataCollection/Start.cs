@@ -29,7 +29,7 @@ namespace InventoryDataCollection
         [STAThread]
         static void Main()
         {
-            DateTime endDate = new DateTime(2013, 8, 31);
+            DateTime endDate = new DateTime(2013, 11, 15);
 #if Log
             endDemo = DateTime.Now.AddDays(14);     
 #endif

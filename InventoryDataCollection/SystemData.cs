@@ -271,6 +271,19 @@ namespace InventoryDataCollection
                         dataDisparityForm.txtBxDbSn.Text = xDatathisSysHRdnLoad.Element("mfg_serial_number").Value;
                         dataDisparityForm.txtBxAtagDB.Text = xDatathisSysHRdnLoad.Element("asset_tag").Value;
                     }
+                    else
+                    {
+                        //test for lenovo b560 here, first 10 chars of mr serial may equal mfg_serial in file
+                        if (this.compManufacturer == "LENOVO" && this.compModel.Substring(0, 5) == "43302")
+                        {
+                            xDatathisSysHRdnLoad = xDataPrev.Elements("system").FirstOrDefault(el => el.Element("mfg_serial_number").Value == this.compSerialNum.Substring(0, 10));
+                            if (xDatathisSysHRdnLoad != null)
+                            {
+                                dataDisparityForm.txtBxDbSn.Text = xDatathisSysHRdnLoad.Element("mfg_serial_number").Value;
+                                dataDisparityForm.txtBxAtagDB.Text = xDatathisSysHRdnLoad.Element("asset_tag").Value;
+                            }
+                        }
+                    }
                 }
             }
             filePrevPath = System.IO.Path.Combine(Start.path, Start.fileNamePrevEir);
@@ -304,6 +317,22 @@ namespace InventoryDataCollection
                     //System.Windows.Forms.MessageBox.Show(str);
                     dataDisparityForm.txtBxIDCPrvSn.Text = xDataThisSysIDCPrev.Element("mfg_serial_number") != null ? xDataThisSysIDCPrev.Element("mfg_serial_number").Value : string.Empty;
                     dataDisparityForm.txtBxATagIDC.Text = xDataThisSysIDCPrev.Element("asset_tag") != null ? xDataThisSysIDCPrev.Element("asset_tag").Value : string.Empty;
+                }
+                else
+                {
+                    if (this.compManufacturer == "LENOVO" && this.compModel.Substring(0, 5) == "43302")
+                    {
+                        xDataThisSysIDCPrev = xDataPrevCollection.FirstOrDefault(el => el.Element("mfg_serial_number") == null ? false : el.Element("mfg_serial_number").Value == this.compSerialNum.Substring(0, 10));
+                        if (xDataThisSysIDCPrev != null)
+                        {
+                            foreach (var item in hrFields)
+                            {
+                                sysData[item] = (string)xDataThisSysIDCPrev.Element(item);
+                            }
+                            dataDisparityForm.txtBxIDCPrvSn.Text = xDataThisSysIDCPrev.Element("mfg_serial_number") != null ? xDataThisSysIDCPrev.Element("mfg_serial_number").Value : string.Empty;
+                            dataDisparityForm.txtBxATagIDC.Text = xDataThisSysIDCPrev.Element("asset_tag") != null ? xDataThisSysIDCPrev.Element("asset_tag").Value : string.Empty;
+                        }
+                    }
                 }
             }
             //next check data disparities & set radio buttons on form

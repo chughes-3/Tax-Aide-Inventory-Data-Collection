@@ -131,16 +131,9 @@ namespace InventoryDataCollection
 
         private void OK_Click(object sender, EventArgs e)
         {
-            if (districtNum.Text == "District Number")
+            if (districtNum.Text == "District Number" || districtNum.Text == "")
             {
-                MessageBox.Show("Please Enter a District Number", "Tax-Aide Inventory Data Collection");
-                return;
-            }
-            int i;
-            if (int.TryParse(districtNum.Text, out i) == false)
-            {
-                DialogResult dr = MessageBox.Show("The District Number is non-numeric. Is this correct?", "Tax-Aide Inventory Data Collection",MessageBoxButtons.YesNo,MessageBoxIcon.Exclamation,MessageBoxDefaultButton.Button1);
-                if (dr == DialogResult.No)
+                MessageBox.Show("Please Enter a District Number or ID", "Tax-Aide Inventory Data Collection");
                 return;
             }
             Log.WritWTime("Form Closed by User");

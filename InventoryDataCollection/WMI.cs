@@ -98,7 +98,7 @@ namespace InventoryDataCollection
                 {
                     VBoxSerial();   // setup serial number for virtual box
                 }
-                if (sysData.compSerialNum == string.Empty || sysData.compSerialNum == "ÿÿÿÿÿ")    //will get here for 6310 with intel wireless, or optiflex ydiaeresis
+                if (sysData.compSerialNum == string.Empty || sysData.compSerialNum.Contains("ÿÿÿÿÿ"))    //will get here for 6310 with intel wireless, or optiflex ydiaeresis
                 {//use mac address since nothing else available
                     sysData.compSerialNum = macAddress;
                 }
